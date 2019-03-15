@@ -59,13 +59,3 @@ CREATE TABLE Listing_score(
   review_scores_value INTEGER,
   PRIMARY KEY(id) REFERENCES Listing (id))
   
-CREATE TABLE Listing_score(
-  id INTEGER,
-  review_scores_rating INTEGER,
-  review_scores_accuracy INTEGER,
-  review_scores_cleanliness INTEGER,
-  review_scores_checkin INTEGER,
-  review_scores_communication INTEGER,
-  review_scores_location INTEGER,
-  review_scores_value INTEGER,
-  PRIMARY KEY(id) REFERENCES Listing (id))
