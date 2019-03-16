@@ -4,8 +4,8 @@ CREATE TABLE Listing (
     -- nid: not originally provided
     listing_url CHAR(40),
     name CHAR(150),
-    summary CHAR(xxx),
-    space CHAR(xxx),
+    summary CHAR(1000),
+    space CHAR(1000),
     PRIMARY KEY (id),
     FOREIGN KEY (nid) REFERENCES Neighbourhood (nid))
 
@@ -13,12 +13,12 @@ CREATE TABLE Listing_descr(
     id INTEGER,
     description CHAR(xxx),
     neighborhood_overview CHAR(xxx),
-    notes CHAR(xxx),
-    transit CHAR(xxx),
-    access CHAR(xxx),
-    interaction CHAR(xxx),
-    house_rules CHAR(xxx),
-    picture_url CHAR(xxx),
+    notes CHAR(1000),
+    transit CHAR(1000),
+    access CHAR(1000),
+    interaction CHAR(1000),
+    house_rules CHAR(1000),
+    picture_url CHAR(116),
     latitude FLOAT,
     longitude FLOAT,
     PRIMARY KEY (id),
@@ -27,14 +27,14 @@ CREATE TABLE Listing_descr(
 
 CREATE TABLE Listing_details(
     id INTEGER,
-    property_tyoe CHAR(xxx),
-    room_type CHAR(xxx),
+    property_tyoe CHAR(22),
+    room_type CHAR(15),
     accommodates INTEGER,
     bathrooms INTEGER,
     bedrooms INTEGER,
     beds INTEGER,
-    bed_type CHAR(xxx),
-    amenities CHAR(xxx),
+    bed_type CHAR(13),
+    amenities CHAR(1388),
     square_feet INTEGER,
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES Listing (id)
@@ -91,8 +91,8 @@ CREATE TABLE Listing_calender(
     CREATE TABLE Neighbourhood(
       nid INTEGER,
       -- not in the data provided: to add ourselves somehow.
-      neighbourhood CHAR(xxx),
-      city CHAR(xxx),
+      neighbourhood CHAR(31),
+      city CHAR(34),
       country_code CHAR(2),
-      country CHAR(xxx),
+      country CHAR(7),
       PRIMARY KEY(nid))
