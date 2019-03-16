@@ -81,7 +81,7 @@ CREATE TABLE Listing_calender(
     uid INTEGER,
     date DATE,
     rid INTEGER,
-    comments CHAR(xxx),
+    comments CHAR(6505),
     PRIMARY KEY(rid),
     FOREIGN KEY (uid) REFERENCES User(uid),
     FOREIGN KEY (id) REFERENCES Listing (id)
