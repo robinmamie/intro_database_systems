@@ -1,10 +1,13 @@
 CREATE TABLE Listing (
     id INTEGER,
+    nid INTEGER,
+    -- nid: not originally provided
     listing_url CHAR(40),
     name CHAR(150),
     summary CHAR(xxx),
     space CHAR(xxx),
-    PRIMARY KEY (id))
+    PRIMARY KEY (id),
+    FOREIGN KEY (nid) REFERENCES Neighbourhood (nid))
 
 CREATE TABLE Listing_descr(
     id INTEGER,
@@ -19,7 +22,8 @@ CREATE TABLE Listing_descr(
     latitude FLOAT,
     longitude FLOAT,
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES Listing (id))
+    FOREIGN KEY (id) REFERENCES Listing (id)
+    ON DELETE CASCADE)
 
 CREATE TABLE Listing_details(
     id INTEGER,
@@ -33,7 +37,8 @@ CREATE TABLE Listing_details(
     amenities CHAR(xxx),
     square_feet INTEGER,
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES Listing (id))
+    FOREIGN KEY (id) REFERENCES Listing (id)
+    ON DELETE CASCADE)
 
 CREATE TABLE Listing_price(
     id INTEGER,
@@ -46,7 +51,8 @@ CREATE TABLE Listing_price(
     guest_included INTEGER,
     extra_people INTEGER,
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES Listing (id))
+    FOREIGN KEY (id) REFERENCES Listing (id)
+    ON DELETE CASCADE)
 
 CREATE TABLE Listing_score(
   id INTEGER,
@@ -58,7 +64,8 @@ CREATE TABLE Listing_score(
   review_scores_location INTEGER,
   review_scores_value INTEGER,
   PRIMARY KEY (id),
-  FOREIGN KEY (id) REFERENCES Listing (id))
+  FOREIGN KEY (id) REFERENCES Listing (id)
+  ON DELETE CASCADE)
 
 CREATE TABLE Listing_calender(
   id INTEGER,
@@ -66,4 +73,26 @@ CREATE TABLE Listing_calender(
   available BIT,
   price FLOAT,
   PRIMARY KEY (id),
-  FOREIGN KEY (id) REFERENCES Listing (id))
+  FOREIGN KEY (id) REFERENCES Listing (id)
+  ON DELETE CASCADE)
+
+  CREATE TABLE Review(
+    id INTEGER NOT NULL,
+    uid INTEGER NOT NULL,
+    date DATE,
+    reviewer_id INTEGER,
+    comments CHAR(xxx),
+    PRIMARY KEY(review_id),
+    FOREIGN KEY (uid) REFERENCES User(uid),
+    FOREIGN KEY (id) REFERENCES Listing (id)
+    ON DELETE CASCADE)
+
+
+    CREATE TABLE Neighbourhood(
+      nid INTEGER,
+      -- not in the data provided: to add ourselves somehow.
+      neighbourhood CHAR(xxx),
+      city CHAR(xxx),
+      country_code CHAR(2),
+      country CHAR(xxx),
+      PRIMARY KEY(nid))
