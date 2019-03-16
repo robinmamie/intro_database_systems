@@ -78,11 +78,11 @@ CREATE TABLE Listing_calender(
 
   CREATE TABLE Review(
     id INTEGER NOT NULL,
-    uid INTEGER NOT NULL,
+    uid INTEGER,
     date DATE,
-    reviewer_id INTEGER,
+    rid INTEGER,
     comments CHAR(xxx),
-    PRIMARY KEY(review_id),
+    PRIMARY KEY(rid),
     FOREIGN KEY (uid) REFERENCES User(uid),
     FOREIGN KEY (id) REFERENCES Listing (id)
     ON DELETE CASCADE)
