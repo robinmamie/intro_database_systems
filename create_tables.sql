@@ -19,7 +19,7 @@ CREATE TABLE Listing_descr(
     latitude FLOAT,
     longitude FLOAT,
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES Listing (id)) 
+    FOREIGN KEY (id) REFERENCES Listing (id))
 
 CREATE TABLE Listing_details(
     id INTEGER,
@@ -47,7 +47,7 @@ CREATE TABLE Listing_price(
     extra_people INTEGER,
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES Listing (id))
-    
+
 CREATE TABLE Listing_score(
   id INTEGER,
   review_scores_rating INTEGER,
@@ -57,5 +57,15 @@ CREATE TABLE Listing_score(
   review_scores_communication INTEGER,
   review_scores_location INTEGER,
   review_scores_value INTEGER,
-  PRIMARY KEY(id) REFERENCES Listing (id))
-  
+  PRIMARY KEY (id),
+  FOREIGN KEY (id) REFERENCES Listing (id))
+
+CREATE TABLE Listing_calender(
+  id INTEGER,
+  date DATE,
+  available BIT,
+  price FLOAT,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id) REFERENCES Listing (id))
+
+)
