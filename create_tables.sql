@@ -67,5 +67,3 @@ CREATE TABLE Listing_calender(
   price FLOAT,
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES Listing (id))
-
-)
