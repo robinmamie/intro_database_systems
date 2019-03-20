@@ -2,23 +2,23 @@ CREATE TABLE Listing (
     id INTEGER,
     nid INTEGER,
     -- nid: not originally provided
-    listing_url CHAR(40),
-    name CHAR(150),
-    summary CHAR(1000),
-    space CHAR(1000),
+    listing_url VARCHAR(40),
+    name VARCHAR(150),
+    summary VARCHAR(1000),
+    space VARCHAR(1000),
     PRIMARY KEY (id),
     FOREIGN KEY (nid) REFERENCES Neighbourhood (nid))
 
 CREATE TABLE Listing_descr(
     id INTEGER,
-    description CHAR(xxx),
-    neighborhood_overview CHAR(xxx),
-    notes CHAR(1000),
-    transit CHAR(1000),
+    description VARCHAR(1000),
+    neighborhood_overview VARCHAR(1000),
+    notes VARCHAR(1000),
+    transit VARCHAR(1000),
     access CHAR(1000),
-    interaction CHAR(1000),
-    house_rules CHAR(1000),
-    picture_url CHAR(116),
+    interaction VARCHAR(1000),
+    house_rules VARCHAR(1000),
+    picture_url VARCHAR(120),
     latitude FLOAT,
     longitude FLOAT,
     PRIMARY KEY (id),
@@ -26,14 +26,14 @@ CREATE TABLE Listing_descr(
 
 CREATE TABLE Listing_details(
     id INTEGER,
-    property_tyoe CHAR(22),
-    room_type CHAR(15),
+    property_type VARCHAR(22),
+    room_type VARCHAR(15),
     accommodates INTEGER,
     bathrooms INTEGER,
     bedrooms INTEGER,
     beds INTEGER,
-    bed_type CHAR(13),
-    amenities CHAR(1388),
+    bed_type VARCHAR(13),
+    amenities VARCHAR(1400),
     square_feet INTEGER,
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE)
@@ -68,7 +68,7 @@ CREATE TABLE Listing_cond(
   minimum_nights INTEGER,
   maximum_nights INTEGER,
   is_business_travel_ready BIT,
-  cancellation_policy CHAR(27),
+  cancellation_policy VARCHAR(27),
   require_guest_profile_picture BIT,
   require_guest_phone_verification BIT,
   PRIMARY KEY (id),
@@ -76,7 +76,7 @@ CREATE TABLE Listing_cond(
 
 CREATE TABLE Listing_calender(
   id INTEGER,
-  date DATE,
+  cdate DATE,
   available BIT,
   price FLOAT,
   PRIMARY KEY (id),
@@ -84,20 +84,20 @@ CREATE TABLE Listing_calender(
   
 CREATE TABLE User(
   uid INTEGER,
-  uname CHAR(40),
+  uname VARCHAR(40),
   PRIMARY KEY (uid))
 
 CREATE TABLE Host(
   uid INTEGER,
-  url CHAR(43),
+  url VARCHAR(43),
   since DATE,
-  about CHAR(13000),
-  response_time CHAR(18),
+  about VARCHAR(13000),
+  response_time VARCHAR(18),
   response_rate INTEGER, -- other value for int. percentages? (no decimal point)
-  thumbnail_url CHAR(120),
-  picture_url CHAR(120),
+  thumbnail_url VARCHAR(120),
+  picture_url VARCHAR(120),
   nid INTEGER, -- references id not name
-  verifications CHAR(170),
+  verifications VARCHAR(170),
   PRIMARY KEY (uid),
   FOREIGN KEY (uid) REFERENCES User (uid) ON DELETE CASCADE,
   FOREIGN KEY (nid) REFERENCES Neighbourhood)
@@ -105,9 +105,9 @@ CREATE TABLE Host(
 CREATE TABLE Review(
   id INTEGER NOT NULL,
   uid INTEGER,
-  date DATE,
+  rdate DATE,
   rid INTEGER,
-  comments CHAR(6505),
+  comments VARCHAR(7000),
   PRIMARY KEY(rid),
   FOREIGN KEY (uid) REFERENCES User(uid),
   FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE)
@@ -115,9 +115,9 @@ CREATE TABLE Review(
 CREATE TABLE Neighbourhood(
   nid INTEGER,
   -- not in the data provided: to add ourselves somehow.
-  neighbourhood CHAR(31),
-  city CHAR(34),
+  neighbourhood VARCHAR(40),
+  city VARCHAR(40),
   country_code CHAR(2),
-  country CHAR(7),
+  country VARCHAR(7),
   PRIMARY KEY(nid))
 
