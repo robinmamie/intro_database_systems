@@ -109,7 +109,7 @@ CREATE TABLE Host(
   user_id INTEGER,
   url VARCHAR(43),
   since DATE,
-  --about TEXT,
+  about VARCHAR2(4000),
   response_time VARCHAR(18),
   response_rate INTEGER, -- other value for int. percentages? (no decimal point)
   thumbnail_url VARCHAR(120),
@@ -126,7 +126,7 @@ CREATE TABLE Review(
   user_id INTEGER,
   rdate DATE,
   rid INTEGER,
-  --comments VARCHAR(7000),
+  comments VARCHAR2(4000),
   PRIMARY KEY(rid),
   FOREIGN KEY (user_id) REFERENCES Airbnb_user(user_id),
   FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE
