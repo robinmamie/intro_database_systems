@@ -1,3 +1,14 @@
+CREATE TABLE Neighbourhood(
+  nid INTEGER,
+  -- not in the data provided: to add ourselves somehow.
+  neighbourhood VARCHAR(40),
+  city VARCHAR(40),
+  country_code CHAR(2),
+  country VARCHAR(7),
+  PRIMARY KEY(nid)
+);
+
+
 CREATE TABLE Listing (
     id INTEGER,
     nid INTEGER,
@@ -7,7 +18,8 @@ CREATE TABLE Listing (
     summary VARCHAR(1000),
     space VARCHAR(1000),
     PRIMARY KEY (id),
-    FOREIGN KEY (nid) REFERENCES Neighbourhood (nid))
+    FOREIGN KEY (nid) REFERENCES Neighbourhood (nid)
+);
 
 CREATE TABLE Listing_descr(
     id INTEGER,
@@ -15,14 +27,15 @@ CREATE TABLE Listing_descr(
     neighborhood_overview VARCHAR(1000),
     notes VARCHAR(1000),
     transit VARCHAR(1000),
-    access CHAR(1000),
+    l_access VARCHAR(1000),
     interaction VARCHAR(1000),
     house_rules VARCHAR(1000),
     picture_url VARCHAR(120),
     latitude FLOAT,
     longitude FLOAT,
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE)
+    FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE
+);
 
 CREATE TABLE Listing_details(
     id INTEGER,
@@ -36,20 +49,21 @@ CREATE TABLE Listing_details(
     amenities VARCHAR(1400),
     square_feet INTEGER,
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE)
+    FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE
+);
 
 CREATE TABLE Listing_price(
     id INTEGER,
     price INTEGER,
     weekly_price INTEGER,
     monthly_price INTEGER,
-    weekly_price INTEGER,
     security_deposit INTEGER,
     cleaning_fee INTEGER,
     guest_included INTEGER,
     extra_people INTEGER,
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE)
+    FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE
+);
 
 CREATE TABLE Listing_score(
   id INTEGER,
@@ -61,63 +75,61 @@ CREATE TABLE Listing_score(
   review_scores_location INTEGER,
   review_scores_value INTEGER,
   PRIMARY KEY (id),
-  FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE)
+  FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE
+);
   
 CREATE TABLE Listing_cond(
   id INTEGER,
   minimum_nights INTEGER,
   maximum_nights INTEGER,
-  is_business_travel_ready BIT,
+  is_business_travel_ready CHAR(1),
   cancellation_policy VARCHAR(27),
-  require_guest_profile_picture BIT,
-  require_guest_phone_verification BIT,
+  require_guest_profile_picture CHAR(1),
+  require_guest_phone_verification CHAR(1),
   PRIMARY KEY (id),
-  FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE)
+  FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE
+);
 
-CREATE TABLE Listing_calender(
+CREATE TABLE Listing_calendar(
   id INTEGER,
   cdate DATE,
-  available BIT,
+  available CHAR(1),
   price FLOAT,
   PRIMARY KEY (id),
-  FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE)
+  FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE
+);
   
-CREATE TABLE User(
-  uid INTEGER,
+CREATE TABLE airbnb_User(
+  user_id INTEGER,
   uname VARCHAR(40),
-  PRIMARY KEY (uid))
+  PRIMARY KEY (user_id)
+);
 
 CREATE TABLE Host(
-  uid INTEGER,
+  user_id INTEGER,
   url VARCHAR(43),
   since DATE,
-  about VARCHAR(13000),
+  --about TEXT,
   response_time VARCHAR(18),
   response_rate INTEGER, -- other value for int. percentages? (no decimal point)
   thumbnail_url VARCHAR(120),
   picture_url VARCHAR(120),
   nid INTEGER, -- references id not name
   verifications VARCHAR(170),
-  PRIMARY KEY (uid),
-  FOREIGN KEY (uid) REFERENCES User (uid) ON DELETE CASCADE,
-  FOREIGN KEY (nid) REFERENCES Neighbourhood)
+  PRIMARY KEY (user_id),
+  FOREIGN KEY (user_id) REFERENCES airbnb_User (user_id) ON DELETE CASCADE,
+  FOREIGN KEY (nid) REFERENCES Neighbourhood
+);
 
 CREATE TABLE Review(
   id INTEGER NOT NULL,
-  uid INTEGER,
+  user_id INTEGER,
   rdate DATE,
   rid INTEGER,
-  comments VARCHAR(7000),
+  --comments VARCHAR(7000),
   PRIMARY KEY(rid),
-  FOREIGN KEY (uid) REFERENCES User(uid),
-  FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE)
+  FOREIGN KEY (user_id) REFERENCES Airbnb_user(user_id),
+  FOREIGN KEY (id) REFERENCES Listing (id) ON DELETE CASCADE
+);
 
-CREATE TABLE Neighbourhood(
-  nid INTEGER,
-  -- not in the data provided: to add ourselves somehow.
-  neighbourhood VARCHAR(40),
-  city VARCHAR(40),
-  country_code CHAR(2),
-  country VARCHAR(7),
-  PRIMARY KEY(nid))
 
