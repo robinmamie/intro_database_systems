@@ -9,5 +9,3 @@ drop table listing_descr;
 drop table listing_details;
 drop table listing_price;
 drop table listing_score;
-
-
