@@ -1,1 +1,1 @@
-To use the following scripts please import create a folder Data and import the provided data there
+To use the following scripts please create a folder Data and import the provided data there
