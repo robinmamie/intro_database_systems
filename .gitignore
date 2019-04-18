@@ -1,2 +1,4 @@
 *.DS_Store
 /Data
+/Parser/Data
+Parser/Csv_to_database
