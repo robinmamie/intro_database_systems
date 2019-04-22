@@ -12,15 +12,15 @@ import scalafx.scene.text.Text
 
 import database._
 
-object Main extends App {
-
-  DatabaseLink.fetch("SELECT user_id FROM host")
-
-}
-
 /*
-object ScalaFXHelloWorld extends JFXApp {
+object Main extends App {
+  val result = DatabaseLink.fetch("SELECT user_id FROM host", List("user_id"))
 
+  for (i <- 0 until 10) println(result(i))
+}
+*/
+
+object ScalaFXHelloWorld extends JFXApp {
 
   stage = new PrimaryStage {
     title = "ScalaFX Hello World"
@@ -54,4 +54,3 @@ object ScalaFXHelloWorld extends JFXApp {
     }
   }
 }
-*/

@@ -9,33 +9,41 @@ object DatabaseLink {
   val host = "cs322-db.epfl.ch"
   val port = 1521
   val sid  = "ORCLCDB"
-  val user = "C##DB2019_G11"
-  val pass = "DB2019_G11"
+  private val user = "C##DB2019_G11"
+  private val pass = "DB2019_G11"
 
-  val ods = new OracleDataSource()
+  private val ods = new OracleDataSource()
   ods.setUser(user)
   ods.setPassword(pass)
   ods.setURL("jdbc:oracle:thin:@" + host + ":" + port + "/" + sid)
 
-  def fetch(query: String) = {
+  private def connect(): Connection = {
     println("Connecting...")
-    val con = ods.getConnection()
+    val connection = ods.getConnection()
     println("Connected to database")
+    connection
+  }
+
+  def fetch(query: String, columns: List[String]): List[List[String]] = {
+    val con = connect()
 
     println("Executing statement " + query)
 
-    println("### START OF STATEMENT ###")
     val statement = con.createStatement()
     val resultSet = statement.executeQuery(query)
+
+    var results = List(columns)
     while (resultSet.next()) {
-      val user = resultSet.getString("user_id")
-      println("user = " + user)
+      val line = for (c <- columns) yield resultSet.getString(c)
+      results = line :: results
     }
-    println("### END OF STATEMENT ###")
+    println("Finished executing the statement.")
 
     statement.close()
     con.close()
     println("Connection closed")
+
+    results.reverse
   }
 
 }
