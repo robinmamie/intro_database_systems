@@ -1,4 +1,4 @@
-package hello
+package interface
 
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
@@ -10,7 +10,17 @@ import scalafx.scene.paint.Color._
 import scalafx.scene.paint.{Stops, LinearGradient}
 import scalafx.scene.text.Text
 
+import database._
+
+object Main extends App {
+
+  DatabaseLink.fetch("SELECT user_id FROM host")
+
+}
+
+/*
 object ScalaFXHelloWorld extends JFXApp {
+
 
   stage = new PrimaryStage {
     title = "ScalaFX Hello World"
@@ -44,3 +54,4 @@ object ScalaFXHelloWorld extends JFXApp {
     }
   }
 }
+*/
