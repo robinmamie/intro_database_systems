@@ -5,7 +5,8 @@ import scalafx.application.JFXApp.PrimaryStage
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
 import scalafx.scene.effect.DropShadow
-import scalafx.scene.layout.HBox
+import scalafx.scene.layout.BorderPane
+//import scalafx.scene.layout.HBox
 import scalafx.scene.paint.Color._
 import scalafx.scene.paint.{Stops, LinearGradient}
 import scalafx.scene.text.Text
@@ -14,42 +15,31 @@ import database._
 
 /*
 object Main extends App {
-  val result = DatabaseLink.fetch("SELECT user_id FROM host", List("user_id"))
+  //val result = DatabaseLink.fetch("SELECT user_id FROM host", List("user_id"))
+  val result = DatabaseLink.fetch("SELECT table_name FROM user_tables")
 
-  for (i <- 0 until 10) println(result(i))
+  for (i <- result) println(i)
 }
 */
 
+
 object ScalaFXHelloWorld extends JFXApp {
 
+
+  val appTitle  = "AirBnB, Group 11"
+  val appHeight = 900
+  val appWidth  = 1500
+
   stage = new PrimaryStage {
-    title = "ScalaFX Hello World"
+    title = appTitle
+    height = appHeight
+    width = appWidth
+    resizable = false
     scene = new Scene {
-      fill = Black
-      content = new HBox {
-        padding = Insets(20)
-        children = Seq(
-          new Text {
-            text = "Hello "
-            style = "-fx-font-size: 48pt"
-            fill = new LinearGradient(
-              endX = 0,
-              stops = Stops(PaleGreen, SeaGreen))
-          },
-          new Text {
-            text = "World!!!"
-            style = "-fx-font-size: 48pt"
-            fill = new LinearGradient(
-              endX = 0,
-              stops = Stops(Cyan, DodgerBlue)
-            )
-            effect = new DropShadow {
-              color = DodgerBlue
-              radius = 25
-              spread = 0.25
-            }
-          }
-        )
+        fill = Black
+      content = new BorderPane {
+        left = Menu
+        center = Center
       }
     }
   }
