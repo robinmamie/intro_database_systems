@@ -1,11 +1,20 @@
 drop table host;
 
+drop table has_host_verification;
+drop table has_amenity;
+
 drop table listing_calendar;
 drop table review;
 
 drop table listing;
 drop table airbnb_user;
 drop table host;
+
+drop table Host_verification;
+drop table Amenity;
+
+
+
 drop table neighbourhood;
 drop table bed_type;
 drop table room_type;

@@ -152,11 +152,32 @@ CREATE TABLE Listing_calendar(
   FOREIGN KEY (listing_id) REFERENCES Listing (id) ON DELETE CASCADE
 );
 
+CREATE TABLE Amenity(
+  aid INTEGER,
+  amenity VARCHAR2(50),
+  PRIMARY KEY (aid)
+);
 
-  
+CREATE TABLE Host_verification(
+  hvid INTEGER,
+  host_verification VARCHAR2(30),
+  PRIMARY KEY (hvid)
+);
 
 
+CREATE TABLE Has_host_verification(
+  listing_id INTEGER,
+  hvid INTEGER,
+  FOREIGN KEY (listing_id) REFERENCES Listing (id) ON DELETE CASCADE,
+  FOREIGN KEY (hvid) REFERENCES Host_verification (hvid) ON DELETE CASCADE
+);
 
+CREATE TABLE Has_amenity(
+  listing_id INTEGER,
+  aid INTEGER,
+  FOREIGN KEY (listing_id) REFERENCES Listing (id) ON DELETE CASCADE,
+  FOREIGN KEY (aid) REFERENCES Amenity (aid) ON DELETE CASCADE
+);
 
 
 
