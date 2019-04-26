@@ -14,7 +14,7 @@ object SearchBean {
   }
 
   val searchTables = ObservableBuffer[Item](
-    Parameters.tableNames.map { n => new Item(true, n) }
+    Parameters.tableNames.map { n => new Item(false, n) }
   )
 
   val searchText = StringProperty("")

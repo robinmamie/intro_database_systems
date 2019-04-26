@@ -1,9 +1,12 @@
 package interface
 
+import scalafx.beans.property.StringProperty
 import scalafx.scene.layout.Pane
 import scalafx.scene.text.Text
 import scalafx.geometry.Insets
 import scalafx.scene.control.{Button, Label}
+import scalafx.scene.control.TableColumn._
+import scalafx.scene.control.{TableCell, TableColumn, TableView}
 import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color._
 import scalafx.scene.text.Text
@@ -15,6 +18,7 @@ object Instance extends Pane {
 
   children = new VBox {
         padding = Insets(20)
+        spacing = 10
         children = Seq(
           new Button {
             prefWidth  = 50
@@ -26,15 +30,28 @@ object Instance extends Pane {
               Center.children = InstanceBean.previousWindow
             }
           },
-          new Label {
-            padding = Insets(40)
-            text = "Lorem ipsum dolor sit amet blablabla I really would like to write a maximum of text here but I do not have any imagination please help me."
-            wrapText = true
-            prefWidth <== Instance.width
-            style = "-fx-font-size: 16pt"
-            textFill = White
-          }
+          TableInst
         )
       }
+}
+
+object TableInst extends TableView[List[StringProperty]] {
+
+  prefWidth = 1100
+  prefHeight = 700
+  val data = InstanceBean.instance.onChange{
+    (buf, _) =>
+      if (!buf.isEmpty) {
+        println("Setting information")
+        items = buf.tail
+        columns.clear()
+        for (i <- 0 until buf(0).size) {
+          columns += new TableColumn[List[StringProperty], String] {
+            text <==> buf.head(i)
+            cellValueFactory = { _.value(i) }
+          }
+        }
+      }
+  }
 }
 

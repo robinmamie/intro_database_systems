@@ -68,7 +68,7 @@ object ShowResults extends VBox {
   children = Seq()
 
   SearchBean.results.onChange { (b, c) =>
-    val res: List[(Item, Result)] = SearchBean.searchTables.toList zip SearchBean.results.toList
+    val res: List[(Item, Result)] = SearchBean.searchTables.filter(i => i.selected()).toList zip SearchBean.results.toList
     children = res flatMap { case (t, r) =>
       Seq(
         new Text {
@@ -81,13 +81,36 @@ object ShowResults extends VBox {
           prefWidth = 800
           vgap = 5
           hgap = 3
-          children = r.map {
+          // FIXME use something else than head => PrimaryKey
+          children = new AllResultsButton (r.drop(1), t.name) :: r.drop(1).map {
             ls => new ResultButton(ls.head, t.name)
           }
         }
       )
     }
   }
+}
+
+class AllResultsButton(res: Result, tableName: String) extends Button {
+
+  prefHeight = 15
+  style = "-fx-font: 12 arial; -fx-background-color: grey; -fx-border: none; -fx-text-fill:white;"
+  text = "ALL"
+
+  onMouseClicked = e => {
+    // FIXME other part where to not use head but primary key
+    val att = Parameters.getAttributes(tableName).head
+    val sb = new StringBuilder
+    sb ++= s"SELECT * FROM ${tableName} WHERE "
+    for (name <- res) {
+      sb ++= s" ${att} = '${name.head}' OR"
+    }
+    val query = sb.toString.dropRight(3)
+    Center.children = Instance
+    InstanceBean.setInstance(DatabaseLink.fetch(query))
+    InstanceBean.previousWindow = Search
+  }
+
 }
 
 class ResultButton(name: String, tableName: String) extends Button {
@@ -97,11 +120,11 @@ class ResultButton(name: String, tableName: String) extends Button {
   text = name
 
   onMouseClicked = e => {
-    println(Parameters.attributeNames)
-    //println(Parameters.primaryAttributes)
-    InstanceBean.setInstance(DatabaseLink.fetch(s"SELECT * FROM ${tableName}"))
-    InstanceBean.previousWindow = Search
+    // FIXME other part where to not use head but primary key
+    val att = Parameters.getAttributes(tableName).head
     Center.children = Instance
+    InstanceBean.setInstance(DatabaseLink.fetch(s"SELECT * FROM ${tableName} WHERE ${att} = '${name}'"))
+    InstanceBean.previousWindow = Search
   }
 
 }

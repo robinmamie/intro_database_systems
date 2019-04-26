@@ -9,10 +9,11 @@ object Lookup {
   }
 
   def allAttributes(toSearch: String, tables: List[String]): List[Result] = {
-    //val tableNames = DatabaseLink.fetch(s"SELECT * FROM user_tables").flatten.drop(1)
-    //print(tableNames)
-    tables map { t =>
-      List(List("id"), List("1234"), List("786345"))
+    Parameters.tables filter {case (t, _) => tables contains t } map { case(t, a) =>
+      val sb = new StringBuilder
+      sb ++= s"SELECT ${a.head} FROM ${t} WHERE"
+      for (i <- a) sb ++= s" ${i} LIKE '%${toSearch}%' OR"
+      DatabaseLink.fetch(sb.toString.dropRight(3), true)
     }
   }
 
