@@ -23,7 +23,9 @@ object DatabaseLink {
   private val con = ods.getConnection()
   println("Connected to database")
 
-  def fetch(query: String): Result = {
+  def fetch(query : String): Result = fetch(query, true)
+
+  def fetch(query: String, header: Boolean): Result = {
     println("Executing statement " + query)
 
     val statement = con.createStatement()
@@ -32,7 +34,7 @@ object DatabaseLink {
     val columnCount = meta.getColumnCount()
     val allColumns = ((1 to columnCount) map (i => meta.getColumnName(i))).toList
 
-    var results = List(allColumns)
+    var results = if (header ) List(allColumns) else List()
     while (resultSet.next()) {
       val line = ((1 to columnCount) map (i => resultSet.getString(i))).toList
       results = line :: results

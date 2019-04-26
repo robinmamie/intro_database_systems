@@ -3,7 +3,7 @@ package interface
 import scalafx.geometry.Insets
 import scalafx.scene.control.{Button, ListView, ScrollPane, TextField}
 import scalafx.scene.control.cell.CheckBoxListCell
-import scalafx.scene.layout.{Pane, VBox, HBox}
+import scalafx.scene.layout.{FlowPane, Pane, VBox, HBox}
 import scalafx.scene.paint.Color._
 import scalafx.scene.text.Text
 
@@ -31,7 +31,7 @@ object Search extends Pane {
           new Button {
             text = "Search"
             onMouseClicked =
-              e => SearchBean.setResults(Lookup.allAttributes(SearchBean.searchText(), SearchBean.searchTables.toList.map(i => i.name)))
+              e => SearchBean.setResults(Lookup.allAttributes(SearchBean.searchText(), SearchBean.searchTables.toList.filter(i => i.selected()).map(i => i.name)))
           }
         )
       },
@@ -62,7 +62,8 @@ object ShowResults extends VBox {
 
   padding = Insets(40)
   spacing = 20
-  prefHeight = 800
+  prefHeight = 500
+  maxHeight = 10000
 
   children = Seq()
 
@@ -76,14 +77,31 @@ object ShowResults extends VBox {
           style = "-fx-font-size: 14pt"
           fill = White
         },
-        new Text {
+        new FlowPane {
           prefWidth = 800
-          text = "This is a test"
-          style = "-fx-font-size: 12pt"
-          fill = White
+          vgap = 5
+          hgap = 3
+          children = r.map {
+            ls => new ResultButton(ls.head, t.name)
+          }
         }
       )
     }
+  }
+}
+
+class ResultButton(name: String, tableName: String) extends Button {
+
+  prefHeight = 15
+  style = "-fx-font: 12 arial; -fx-background-color: grey; -fx-border: none; -fx-text-fill:white;"
+  text = name
+
+  onMouseClicked = e => {
+    println(Parameters.attributeNames)
+    //println(Parameters.primaryAttributes)
+    InstanceBean.setInstance(DatabaseLink.fetch(s"SELECT * FROM ${tableName}"))
+    InstanceBean.previousWindow = Search
+    Center.children = Instance
   }
 
 }
