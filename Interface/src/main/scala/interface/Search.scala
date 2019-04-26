@@ -82,8 +82,10 @@ object ShowResults extends VBox {
           vgap = 5
           hgap = 3
           // FIXME use something else than head => PrimaryKey
-          children = new AllResultsButton (r.drop(1), t.name) :: r.drop(1).map {
-            ls => new ResultButton(ls.head, t.name)
+          if (r.size > 1) {
+            children = new AllResultsButton (r.drop(1), t.name) :: r.drop(1).map {
+              ls => new ResultButton(ls.head, t.name)
+            }
           }
         }
       )

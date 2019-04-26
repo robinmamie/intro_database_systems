@@ -39,14 +39,18 @@ object TableInst extends TableView[List[StringProperty]] {
 
   prefWidth = 1100
   prefHeight = 700
+
+  style = "-fx-background-color: transparent; -fx-text-fill: white;"
+
   val data = InstanceBean.instance.onChange{
     (buf, _) =>
       if (!buf.isEmpty) {
-        println("Setting information")
         items = buf.tail
         columns.clear()
         for (i <- 0 until buf(0).size) {
           columns += new TableColumn[List[StringProperty], String] {
+            // FIXME allow textWrap (in cellFactory?)
+            //maxWidth = 1000
             text <==> buf.head(i)
             cellValueFactory = { _.value(i) }
           }
