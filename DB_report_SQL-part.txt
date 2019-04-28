@@ -1,3 +1,6 @@
+Assumption:
+For all queries which implied prices, we considered the prices of all listings, available or not.
+
 1. What	is the average price for a listing with 8 bedrooms?
 
 
