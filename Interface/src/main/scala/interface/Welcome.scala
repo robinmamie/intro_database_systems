@@ -8,6 +8,8 @@ import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color._
 import scalafx.scene.text.Text
 
+import tools.Parser
+
 object Welcome extends Pane {
 
   prefHeight = 900
@@ -24,7 +26,7 @@ object Welcome extends Pane {
           },
           new Label {
             padding = Insets(40)
-            text = "Lorem ipsum dolor sit amet blablabla I really would like to write a maximum of text here but I do not have any imagination please help me."
+            text = Parser.getString("welcome.txt")
             wrapText = true
             prefWidth <== Welcome.width
             style = "-fx-font-size: 16pt"

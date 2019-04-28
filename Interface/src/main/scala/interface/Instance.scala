@@ -30,12 +30,12 @@ object Instance extends Pane {
               Center.children = InstanceBean.previousWindow
             }
           },
-          TableInst
+          new TableInst()
         )
       }
 }
 
-object TableInst extends TableView[List[StringProperty]] {
+class TableInst extends TableView[List[StringProperty]] {
 
   prefWidth = 1100
   prefHeight = 700

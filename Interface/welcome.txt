@@ -1,0 +1,10 @@
+This program contains the following functionalities:
+
+- Search
+Allows the user to look for any key word in any table he chooses from.
+
+- Queries
+Allows the user to interactively explore the required queries of this project.
+
+- Insert/Delete
+Allows the user to add or remove any data from the database.
