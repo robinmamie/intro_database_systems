@@ -4,13 +4,22 @@ CREATE TABLE Neighbourhood(
   PRIMARY KEY(nid)
 );
 
-CREATE TABLE City(
-  cid INTEGER,
-  city VARCHAR2(40),
+CREATE TABLE Country(
+  country_id INTEGER,
   country VARCHAR2(7),
   country_code CHAR(2),
-  PRIMARY KEY(cid)
+  PRIMARY KEY(country_id)
 );
+
+
+CREATE TABLE City(
+  city_id INTEGER,
+  city VARCHAR2(40),
+  country_id INTEGER,
+  PRIMARY KEY(city_id),
+  FOREIGN KEY (country_id) REFERENCES Country (country_id)
+);
+
 
 --CREATE TABLE Airbnb_user(
 --  user_id INTEGER,
@@ -49,8 +58,8 @@ CREATE TABLE Room_type(
 );
 
 CREATE TABLE Host(
-  user_id INTEGER,
-  user_name VARCHAR2(40),
+  host_id INTEGER,
+  host_name VARCHAR2(40),
   url VARCHAR2(43),
   since DATE,
   about VARCHAR2(4000),
@@ -60,7 +69,7 @@ CREATE TABLE Host(
   picture_url VARCHAR2(120),
   nid INTEGER, -- references id not name
   verifications VARCHAR2(170),
-  PRIMARY KEY (user_id),
+  PRIMARY KEY (host_id),
   FOREIGN KEY (response_time) REFERENCES Host_response_time(hrtid),
  -- FOREIGN KEY (user_id) REFERENCES airbnb_User (user_id) ON DELETE CASCADE,
   FOREIGN KEY (nid) REFERENCES Neighbourhood
@@ -81,19 +90,23 @@ CREATE TABLE Listing (
     interaction VARCHAR2(1500),
     house_rules VARCHAR2(1500),
     picture_url VARCHAR2(120),
-    user_id INTEGER,
+    host_id INTEGER,
+    --neighbourhood_id
     nid INTEGER,
-    cid INTEGER,
+    --city_id
+    city_id INTEGER,
     latitude FLOAT,
     longitude FLOAT,
+    --property_type_id
     ptid INTEGER,
+    --room_type_id
     rtid INTEGER,
     accommodates INTEGER,
     bathrooms FLOAT,
     bedrooms INTEGER,
     beds INTEGER,
+    --bed_type id
     btid INTEGER,
-    amenities VARCHAR2(1400),
     square_feet INTEGER,
     price FLOAT,
     weekly_price FLOAT,
@@ -112,14 +125,15 @@ CREATE TABLE Listing (
     review_scores_location INTEGER,
     review_scores_value INTEGER,
     is_business_travel_ready CHAR(1),
+    --cancellation_policy_id
     cpid INTEGER,
     require_guest_profile_picture CHAR(1),
     require_guest_phone_verification CHAR(1),
     
     
     PRIMARY KEY (id),
-    FOREIGN KEY (cid) REFERENCES City (cid),
-    FOREIGN KEY (user_id) REFERENCES Host(user_id),
+    FOREIGN KEY (city_id) REFERENCES City (city_id),
+    FOREIGN KEY (host_id) REFERENCES Host(host_id),
     FOREIGN KEY (ptid) REFERENCES Property_type (ptid),
     FOREIGN KEY (rtid) REFERENCES Room_type (rtid),
     FOREIGN KEY (btid) REFERENCES Bed_type (btid),
@@ -132,8 +146,8 @@ CREATE TABLE Listing (
 CREATE TABLE Review(
   rid INTEGER,
   listing_id INTEGER NOT NULL,
-  user_id INTEGER,
-  user_name VARCHAR2(60),
+  reviewer_id INTEGER,
+  reviewer_name VARCHAR2(60),
   rdate DATE,
   comments VARCHAR2(4000),
   PRIMARY KEY(rid),
