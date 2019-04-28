@@ -1,4 +1,5 @@
-1. What	is the average price for a listing with 8 bedrooms?
+1. What	is the average price for a listing with 8 bedrooms?
+
 
 What does the query do ?
 
@@ -16,11 +17,12 @@ WHERE l.bedrooms = 8;
 
 Result
 
-The averagae is 313.153846153846153846153846153846153846.
+The average is 313.153846153846153846153846153846153846.
 
 ==================================================================================
 
-2. What is the average cleaning	review score for listings with TV?
+2. What is the average cleaning	review score for listings with TV?
+
 
 What does the query do ?
 
@@ -76,10 +78,12 @@ Result
 2. Kristjan Y Ana
 3. Mar
 4. Jaume
-5. Jesus
+5. Jesus
+
 ==================================================================================
 
-4. Print how many listing items	exist that are posted by two different hosts but the hosts have the same name.
+4. Print how many listing items	exist that are posted by two different hosts but the hosts have the same name.
+
 
 What does the query do ?
 
@@ -129,7 +133,8 @@ Result
 2. 02.03.19
 3. 01.03.19
 4. 28.02.19
-5. 27.02.19
+5. 27.02.19
+
 ==================================================================================
 
 6. Find	all the	hosts (host_ids, host_names) that have only one	listing.
@@ -158,7 +163,8 @@ Result
 2. 95585	Daniela
 3. 488151	Pols
 4. 509260	Dalila
-5. 664196	Teresa
+5. 664196	Teresa
+
 ==================================================================================
 
 7. What	is the difference in the average price of listings with and without Wifi.
@@ -198,7 +204,8 @@ SELECT
 
 Result
 
-The difference in the average price of listings with and without Wifi is 3.21388138715504444404700159175862500671.
+The difference in the average price of listings with and without Wifi is 3.21388138715504444404700159175862500671.
+
 ==================================================================================
 
 8. How much more (or less) costly to rent a room with 8	beds in	Berlin compared to Madrid on average?
@@ -291,11 +298,11 @@ Result
 
 1. 26033978	3 bedroom apartment in the center of barcelona
 2. 370665	vig HAPPY APARTMENT IN EL BORN
-3. 6653030	HabitaciÛn mediana Poble Sec
-4. 378998	PRECIOSA Y ACOGEDORA HABITACI”N 
+3. 6653030	Habitaci√≥n mediana Poble Sec
+4. 378998	PRECIOSA Y ACOGEDORA HABITACI√ìN 
 5. 21095463	Near by parck guell
-6. 275326	1BR on Pg de Gr‡cia - Gran Via 
-7. 274501	Modern Luxury 1BR apt Pg de Gr‡cia
+6. 275326	1BR on Pg de Gr√†cia - Gran Via 
+7. 274501	Modern Luxury 1BR apt Pg de Gr√†cia
 8. 180293	Ally`s Guest House Barcelona
 9. 195092	Bonitas vistas de Barcelona
 10.11431221	Apartamento en Barceloneta
