@@ -21,12 +21,6 @@ CREATE TABLE City(
 );
 
 
---CREATE TABLE Airbnb_user(
---  user_id INTEGER,
---  user_name VARCHAR2(40),
---  PRIMARY KEY (user_id)
---);
-
 CREATE TABLE Bed_type(
   btid INTEGER,
   bed_type VARCHAR2(13),
@@ -71,7 +65,6 @@ CREATE TABLE Host(
   verifications VARCHAR2(170),
   PRIMARY KEY (host_id),
   FOREIGN KEY (response_time) REFERENCES Host_response_time(hrtid),
- -- FOREIGN KEY (user_id) REFERENCES airbnb_User (user_id) ON DELETE CASCADE,
   FOREIGN KEY (nid) REFERENCES Neighbourhood
 );
 
@@ -151,7 +144,6 @@ CREATE TABLE Review(
   rdate DATE,
   comments VARCHAR2(4000),
   PRIMARY KEY(rid),
-  --FOREIGN KEY (user_id) REFERENCES Host(user_id),
   FOREIGN KEY (listing_id) REFERENCES Listing (id) ON DELETE CASCADE
 );
 
@@ -162,7 +154,6 @@ CREATE TABLE Listing_calendar(
   cdate DATE,
   available CHAR(1),
   price FLOAT,
-  --PRIMARY KEY (listing_id),
   FOREIGN KEY (listing_id) REFERENCES Listing (id) ON DELETE CASCADE
 );
 
