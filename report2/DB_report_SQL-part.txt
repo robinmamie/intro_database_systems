@@ -1,0 +1,312 @@
+Assumption:
+For all queries which implied prices, we considered the prices of all listings, available or not.
+
+1. What	is the average price for a listing with 8 bedrooms?
+
+
+What does the query do ?
+
+We are looking for the average price of all listing which have 8 bedrooms.
+
+How did we decide to solve it ?
+
+We solved this by using the key word AVG and adding the condition enforcing that the listing contains 8 bedrooms.
+
+Code
+
+SELECT AVG (l.price)
+FROM Listing l
+WHERE l.bedrooms = 8;
+
+Result
+
+The average is 313.153846153846153846153846153846153846.
+
+==================================================================================
+
+2. What is the average cleaning	review score for listings with TV?
+
+
+What does the query do ?
+
+The query looks for all listings which propose a TV and computes the average cleaning review of this selection.
+
+How did we decide to solve it ?
+
+Assumption: We only looked for the keyword 'TV' in amenities because eventhough it can be stated in the small or longer description that there is a television, it is strictly needed to be specified in amenities by definition, and this is why we only considered this field.
+
+'Amenity' is a list which contains all available amenities so we had to see if TV was part of the amenities of the listing and to establish the link between the listing and the amenities, 'Has_amenity? has been used.
+
+Code
+
+SELECT AVG(L.review_scores_cleanliness)
+FROM Listing L,
+  Has_amenity H,
+  Amenity A
+WHERE A.amenity  = 'TV'
+AND H.aid          = A.aid
+AND H.listing_id = L.id;
+
+Result
+
+The average cleaning review score is 9.39829535417770711888358947182476594241.
+
+==================================================================================
+
+3. Print all the hosts who have	an available property between date 03.2019 and 09.2019.
+
+What does the query do ?
+
+The query selects all the names of the hosts who have at least one listing between the above dates. 
+
+How did we decide to solve it ?
+
+We retrieved the date information in the calendar table and established the link to the host table through the listing one. The dates had to be formatted correctly to be interpreted the way we wanted.
+
+Code
+
+SELECT DISTINCT H.user_name
+FROM Listing L, Host H
+WHERE H.user_id = L.user_id
+AND L.id       IN
+  ( SELECT DISTINCT listing_id
+  FROM Listing_calendar
+  WHERE cdate >= '01.03.19'--'2019-03-01'
+  AND cdate   <= '01-09-19'--'2019-09-01'
+  );
+
+Result
+
+1. Antonio
+2. Kristjan Y Ana
+3. Mar
+4. Jaume
+5. Jesus
+
+==================================================================================
+
+4. Print how many listing items	exist that are posted by two different hosts but the hosts have the same name.
+
+
+What does the query do ?
+
+The query looks for all listings whose host has the same name as another host who has at least one listing and this other host is not himself.
+
+How did we decide to solve it ?
+
+We matched 2 pairs of 'Listing' entities with 'Host' entities to be able, once a listing with the correct condition being found, to find the name of the host given a listing to check if the names of the hosts are equal eventhough they are not the same person.
+
+Code
+
+SELECT COUNT (DISTINCT l1.id)
+FROM Listing l1, Host h1, Listing l2, Host h2
+WHERE l1.user_id = h1.user_id
+AND   l2.user_id = h2.user_id
+AND   h1.user_name = h2.user_name
+AND   h1.user_id != h2.user_id;
+
+Result
+
+1 listing has been found and it is : 30393.
+
+==================================================================================
+
+5. Print all the dates that 'Viajes Eco' has available accommodations for rent.
+
+What does the query do ?
+
+The query looks for dates of listing whose host is 'Viajes Eco'.
+
+How did we decide to solve it ?
+
+We decided to solve it by using the 'Listing' to establish the link between the 'Listing_calender' table and 'Host' table, to find dates of listing whose host is 'Viajes Eco' without forgetting to ensure that the listings proposed are available.
+
+Code
+
+SELECT c.cdate
+FROM Listing_calendar c, Listing l, Host h
+WHERE c.listing_id = l.id
+AND l.user_id = h.user_id
+AND h.user_name = 'Viajes Eco'
+AND c.available  = 't';
+
+Result
+
+1. 03.03.19
+2. 02.03.19
+3. 01.03.19
+4. 28.02.19
+5. 27.02.19
+
+==================================================================================
+
+6. Find	all the	hosts (host_ids, host_names) that have only one	listing.
+
+What does the query do ?
+
+The query finds all hosts that only have a single listing.
+
+How did we decide to solve it ?
+
+We decided to solve it by using an nested quiery. We print all host ids and host names for which the number of listings is exactly equal to 1.
+
+Code
+
+SELECT DISTINCT h.user_id, h.user_name
+FROM Host h
+WHERE (SELECT COUNT (l.id)
+FROM Listing l
+GROUP BY l.user_id
+HAVING l.user_id = h.user_id) = 1;
+
+
+Result
+
+1. 431839	Xavier
+2. 95585	Daniela
+3. 488151	Pols
+4. 509260	Dalila
+5. 664196	Teresa
+
+==================================================================================
+
+7. What	is the difference in the average price of listings with and without Wifi.
+
+What does the query do ?
+
+It computes the substraction between the average price of listings with Wifi minus the average price of listings without Wifi.
+
+How did we decide to solve it ?
+
+We directly subtract the two separate queries using the amenities list as previously done for the  2nd request.
+
+Code
+
+SELECT
+  (SELECT AVG(L.price)
+  FROM Listing L
+  WHERE L.id IN
+    (SELECT H.listing_id
+    FROM Has_amenity H,
+      Amenity A 
+      WHERE A.amenity = 'Wifi'
+    AND H.aid               = A.aid
+    )
+  ) -
+  (SELECT AVG(L.price)
+  FROM Listing L
+  WHERE L.id NOT IN
+    (SELECT H.listing_id
+    FROM Has_amenity H,
+      Amenity A
+      WHERE A.amenity = 'Wifi'
+    AND H.aid               = A.aid
+    )
+  ) FROM DUAL;
+
+
+Result
+
+The difference in the average price of listings with and without Wifi is 3.21388138715504444404700159175862500671.
+
+==================================================================================
+
+8. How much more (or less) costly to rent a room with 8	beds in	Berlin compared to Madrid on average?
+
+What does the query do ?
+
+It computes the difference between the average price of a listing offering 8 bedrooms in Berlin and the average price of a listing offering 8 beds in Madrid.
+
+How did we decide to solve it ?
+
+We solved this by subtracing the two average prices, selecting all listings with 8 beds from Madrid, and then Berlin.
+
+Code
+
+SELECT avg1 - avg2 FROM
+  (SELECT AVG(l1.price) AS avg1
+  FROM Listing l1, City c1
+  WHERE l1.beds = 8
+  AND l1.cid = c1.cid
+  AND c1.city = 'Berlin')
+, (SELECT AVG(l2.price) AS avg2
+  FROM  Listing l2, City c2
+  WHERE l2.beds = 8
+  AND l2.cid = c2.cid
+  AND c2.city = 'Madrid');
+
+Result
+
+The average difference is : -101.592615012106537530266343825665859565.
+
+==================================================================================
+
+9. Find	the top-10 (in terms of	the number of listings) hosts (host_ids, host_names) in Spain.
+
+What does the query do ?
+
+It selects the 10 hosts who have the highest number of listings in Spain.
+
+How did we decide to solve it ?
+
+We group all listings by their hosts ids and then we order them in a decrasing order and take the top 10. We have to perform another manipulation to not only retrieve the host ids, but also the host names.
+
+Code
+
+SELECT H.user_id, H.user_name
+FROM Host H
+WHERE H.user_id IN (SELECT  L.user_id
+FROM Listing L, City C
+WHERE L.cid   = C.cid
+AND C.country = 'Spain'
+GROUP BY L.user_id
+ORDER BY COUNT(*) DESC
+FETCH FIRST 10 ROWS ONLY);
+
+Result
+
+
+1. 1391607	Aline
+2. 28038703	Luxury Rentals Madrid
+3. 32046323	Juan
+4. 299462	Stay U-Nique
+5. 1408525	Mad4Rent
+6. 5878688	Yaiza
+7. 4459553	Eva&Jacques
+8. 10704	Weflating
+9. 3566146	Home Club
+10.99018982	Apartamentos
+==================================================================================
+
+10. Find the top-10 rated (review_score_rating) apartments (id,name) in Barcelona.
+
+What does the query do ?
+
+It selects the 10 apartments that have the best review score rating in Barcelona.
+
+How did we decide to solve it ?
+
+We simply have selected the listings that are in Barcelona, ordered them according to their rating and we took the top 10.
+
+Code
+
+SELECT  L.id, L.name
+FROM Listing L, City C
+WHERE L.cid   = C.cid
+AND C.city = 'Barcelona'
+ORDER BY L.review_scores_rating DESC
+FETCH FIRST 10 ROWS ONLY;
+
+Result
+
+1. 26033978	3 bedroom apartment in the center of barcelona
+2. 370665	vig HAPPY APARTMENT IN EL BORN
+3. 6653030	Habitación mediana Poble Sec
+4. 378998	PRECIOSA Y ACOGEDORA HABITACIÓN 
+5. 21095463	Near by parck guell
+6. 275326	1BR on Pg de Gràcia - Gran Via 
+7. 274501	Modern Luxury 1BR apt Pg de Gràcia
+8. 180293	Ally`s Guest House Barcelona
+9. 195092	Bonitas vistas de Barcelona
+10.11431221	Apartamento en Barceloneta
+
