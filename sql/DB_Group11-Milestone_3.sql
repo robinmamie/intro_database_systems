@@ -1,14 +1,14 @@
+--1
 SELECT C.city, cnt
 FROM City C,
-  (SELECT L.city_id AS cid,
-    COUNT(*)        AS cnt
+(Select cid1 as cid, Count(*) as cnt 
+FROM (SELECT L.city_id AS cid1
   FROM Listing L
   WHERE L.square_feet IS NOT NULL
-  GROUP BY L.city_id
-  )
+  GROUP BY L.city_id, L.host_id)
+GROUP BY cid1)
 WHERE cid = C.city_id
 ORDER BY C.CITY;
-
 
 -- We have to create our own function median
 Select L.nid , MEDIAN(L.review_scores_rating)
