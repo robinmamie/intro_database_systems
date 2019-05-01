@@ -18,8 +18,21 @@ Group by L.nid
 Order by MEDIAN(L.review_scores_rating) DESC
 FETCH FIRST 5 ROWS ONLY;
 
---3
 
+--2 without median
+SELECT neigh, percentile_disc
+FROM 
+(SELECT 
+   nid as neigh, PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY review_scores_rating DESC)
+   AS percentile_disc
+   FROM Listing
+   GROUP BY nid)
+where PERCENTILE_DISC IS NOT NULL
+order by percentile_disc DESC
+FETCH FIRST 5 ROWS ONLY;
+
+
+--3
 
 CREATE VIEW host_list_c AS
   SELECT L.host_id AS hid , COUNT(*) AS cnt FROM Listing L GROUP BY L.host_id
@@ -32,3 +45,6 @@ WHERE hlc.cnt =
 FROM host_list_c hlc2)
 AND h.host_id = hlc.hid
 ;
+
+
+--4
