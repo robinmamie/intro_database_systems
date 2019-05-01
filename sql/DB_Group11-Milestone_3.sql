@@ -21,31 +21,14 @@ FETCH FIRST 5 ROWS ONLY;
 --3
 
 
-CREATE VIEW tmp AS
+CREATE VIEW host_list_c AS
   SELECT L.host_id AS hid , COUNT(*) AS cnt FROM Listing L GROUP BY L.host_id
   ; 
 
 Select h.host_id, h.host_name
-from tmp t2, Host h
-WHERE t2.cnt =
-(SELECT MAX(t1.cnt)
-FROM tmp t1) AND h.host_id = t2.hid
+from host_list_c hlc, Host h
+WHERE hlc.cnt =
+(SELECT MAX(hlc2.cnt)
+FROM host_list_c hlc2)
+AND h.host_id = hlc.hid
 ;
-
-  
-  
-SELECT MAX(tmp.cnt)
-FROM tmp t1, tmp t2, Host H
-WHERE t1.hid = H.host_id
-;
---Order by cnt DESC;
-  
-
-SELECT H.host_id, H.host_name, cnt
-FROM Host H,
-(Select L.host_id as hid , Count(*) as cnt
-From Listing L
-Group by L.host_id)
-WHERE sub.hid = H.host_id
-Order by cnt DESC;
-
