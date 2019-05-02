@@ -1,5 +1,17 @@
+--7
+Select L.nid, HA.listing_id, HA.aid 
+From Has_amenity HA, Listing L
+WHERE L.id = HA.listing_id;
 
+(Select L.id
+From Listing L, Room_type RT, City C
+Where L.rtid = RT.rtid
+AND RT.room_type = 'Private room'
+AND C.city_id = L.city_id
+AND C.city = 'Berlin');
 
+Select *
+FROM Room_type;
 --1
 SELECT C.city, cnt
 FROM City C,
@@ -128,4 +140,3 @@ FROM
   AND L.id                    = lid
   )
 WHERE row_number <=3;
-SELECT listing_id AS lid, COUNT(*) AS cnt FROM Review GROUP BY listing_id;
