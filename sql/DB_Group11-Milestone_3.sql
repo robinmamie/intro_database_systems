@@ -1,5 +1,12 @@
---10
 
+
+
+Select L.nid, max(H.since)
+From Host H, madrid_listing L
+Where L.host_id = H.host_id
+Group BY L.nid
+Having max(H.since) <= '01.06.17'
+;
 
 
 --1
@@ -205,3 +212,34 @@ Group by L.city_id) T
 Where C.city_id = T.city_id
 Order By cnt desc
 FETCH FIRST 1 ROWS ONLY;
+
+--10
+CREATE VIEW madrid_listing AS
+  SELECT L.id as listing_id,  L.nid as nid, L.host_id FROM Listing L, City C Where L.city_id = C.city_id and C.city = 'Madrid'
+  ; 
+
+Select part.nid
+From
+(Select L.nid as nid , Count(Distinct L.listing_id) as cnt
+From Listing_calendar C, madrid_listing L
+where extract(YEAR from C.cdate) = 2019
+and L.listing_id= C.listing_id 
+and L.nid IN
+(
+Select L.nid
+From Host H, madrid_listing L
+Where L.host_id = H.host_id
+Group BY L.nid
+Having max(H.since) <= '01.06.17'
+)
+Group by L.nid
+Having Count(*) > 0) part,
+
+(Select L.nid as nid , Count(Distinct L.listing_id) as cnt
+From Listing_calendar C , madrid_listing L
+Where L.listing_id= C.listing_id 
+Group by L.nid
+Having Count(*) > 0) total
+Where part.nid = total.nid
+and part.cnt / total.cnt > 0.5
+;
