@@ -1,4 +1,6 @@
---9
+--10
+
+
 
 --1
 SELECT C.city, cnt
@@ -178,3 +180,28 @@ AND L2.id IN
     )
   FETCH FIRST 1 ROWS ONLY
   ) ;
+  
+
+--9
+Select C.city
+From city C,
+(
+Select city_id, count(*) as cnt
+From Listing L , review R
+Where L.rtid in 
+(Select rtid
+From Listing L,
+
+(Select HA.listing_id, Count(*) as cnt
+FROM Has_amenity HA
+Group by ha.listing_id)
+
+Where L.id = listing_id
+Group By rtid 
+Having avg(cnt) >= 3)
+
+and R.listing_id = L.id
+Group by L.city_id) T
+Where C.city_id = T.city_id
+Order By cnt desc
+FETCH FIRST 1 ROWS ONLY;
