@@ -1,14 +1,5 @@
 
 
-
-Select L.nid, max(H.since)
-From Host H, madrid_listing L
-Where L.host_id = H.host_id
-Group BY L.nid
-Having max(H.since) <= '01.06.17'
-;
-
-
 --1
 SELECT C.city, cnt
 FROM City C,
@@ -213,7 +204,7 @@ Where C.city_id = T.city_id
 Order By cnt desc
 FETCH FIRST 1 ROWS ONLY;
 
---10
+--10 La querry est quasi faite, il faut juste que je mette à jour calendar. A vérifier si je fais bien les choses
 CREATE VIEW madrid_listing AS
   SELECT L.id as listing_id,  L.nid as nid, L.host_id FROM Listing L, City C Where L.city_id = C.city_id and C.city = 'Madrid'
   ; 
@@ -224,6 +215,7 @@ From
 From Listing_calendar C, madrid_listing L
 where extract(YEAR from C.cdate) = 2019
 and L.listing_id= C.listing_id 
+And C.available = 'f'
 and L.nid IN
 (
 Select L.nid
@@ -237,9 +229,31 @@ Having Count(*) > 0) part,
 
 (Select L.nid as nid , Count(Distinct L.listing_id) as cnt
 From Listing_calendar C , madrid_listing L
-Where L.listing_id= C.listing_id 
+Where L.listing_id= C.listing_id
 Group by L.nid
 Having Count(*) > 0) total
 Where part.nid = total.nid
 and part.cnt / total.cnt > 0.5
+;
+
+--11
+Select part.country_id, part.cnt / total.cnt
+From
+(Select city.country_id as country_id , Count(Distinct L.id) as cnt
+From Listing_calendar C, Listing L, City city
+where extract(YEAR from C.cdate) = 2018
+and L.id= C.listing_id 
+and L.city_id = city.city_id
+And C.available = 't'
+Group by city.country_id
+Having Count(*) > 0) part,
+
+(Select city.country_id as country_id , Count(Distinct L.id) as cnt
+From Listing_calendar C , Listing L, City city
+Where L.id= C.listing_id
+and L.city_id = city.city_id
+Group by city.country_id
+Having Count(*) > 0) total
+Where part.country_id = total.country_id
+and part.cnt / total.cnt > 0.2
 ;
