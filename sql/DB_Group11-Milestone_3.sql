@@ -1,17 +1,5 @@
---7
-Select L.nid, HA.listing_id, HA.aid 
-From Has_amenity HA, Listing L
-WHERE L.id = HA.listing_id;
 
-(Select L.id
-From Listing L, Room_type RT, City C
-Where L.rtid = RT.rtid
-AND RT.room_type = 'Private room'
-AND C.city_id = L.city_id
-AND C.city = 'Berlin');
 
-Select *
-FROM Room_type;
 --1
 SELECT C.city, cnt
 FROM City C,
@@ -138,5 +126,32 @@ FROM
     )
   WHERE review_scores_rating IS NOT NULL
   AND L.id                    = lid
+  )
+WHERE row_number <=3;
+
+
+--7
+SELECT *
+FROM
+  (SELECT Cerise.nid,
+    Cerise.aid,
+    cnt ,
+    row_number() over ( partition BY Cerise.nid order by cnt DESC) row_number
+  FROM
+    (SELECT L.nid,
+      HA.aid,
+      COUNT(*) AS cnt
+    FROM Has_amenity HA,
+      Listing L,
+      Room_type RT,
+      City C
+    WHERE L.id       = HA.listing_id
+    AND L.rtid       = RT.rtid
+    AND RT.room_type = 'Private room'
+    AND C.city_id    = L.city_id
+    AND C.city       = 'Berlin'
+    GROUP BY L.nid,
+      HA.aid
+    ) Cerise
   )
 WHERE row_number <=3;
