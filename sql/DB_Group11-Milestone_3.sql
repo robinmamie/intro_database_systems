@@ -1,26 +1,28 @@
-
-
 --1
-SELECT C.city, cnt
+SELECT C.city,
+  cnt
 FROM City C,
-(Select cid1 as cid, Count(*) as cnt 
-FROM (SELECT L.city_id AS cid1
-  FROM Listing L
-  WHERE L.square_feet IS NOT NULL
-  GROUP BY L.city_id, L.host_id)
-GROUP BY cid1)
+  (SELECT cid1 AS cid,
+    COUNT(*)   AS cnt
+  FROM
+    (SELECT L.city_id AS cid1
+    FROM Listing L
+    WHERE L.square_feet IS NOT NULL
+    GROUP BY L.city_id,
+      L.host_id
+    )
+  GROUP BY cid1
+  )
 WHERE cid = C.city_id
 ORDER BY C.CITY;
-
 -- We have to create our own function median
-Select L.nid , MEDIAN(L.review_scores_rating)
-From Listing L
-Where L.review_scores_rating IS NOT NULL
-Group by L.nid 
-Order by MEDIAN(L.review_scores_rating) DESC
+SELECT L.nid ,
+  MEDIAN(L.review_scores_rating)
+FROM Listing L
+WHERE L.review_scores_rating IS NOT NULL
+GROUP BY L.nid
+ORDER BY MEDIAN(L.review_scores_rating) DESC
 FETCH FIRST 5 ROWS ONLY;
-
-
 --2 without median function
 SELECT neigh,
   percentile_disc
@@ -34,59 +36,52 @@ FROM
 WHERE PERCENTILE_DISC IS NOT NULL
 ORDER BY percentile_disc DESC
 FETCH FIRST 5 ROWS ONLY;
-
-
 --3
-
 CREATE VIEW host_list_c AS
-  SELECT L.host_id AS hid , COUNT(*) AS cnt FROM Listing L GROUP BY L.host_id
-  ; 
-
-Select h.host_id, h.host_name
-from host_list_c hlc, Host h
+SELECT L.host_id AS hid , COUNT(*) AS cnt FROM Listing L GROUP BY L.host_id ;
+SELECT h.host_id,
+  h.host_name
+FROM host_list_c hlc,
+  Host h
 WHERE hlc.cnt =
-(SELECT MAX(hlc2.cnt)
-FROM host_list_c hlc2)
-AND h.host_id = hlc.hid
-;
-
-
+  (SELECT MAX(hlc2.cnt) FROM host_list_c hlc2
+  )
+AND h.host_id = hlc.hid ;
 --4
-Select L.id, lprice
-From Listing L,
-City C,
-Cancellation_policy CP,
-HAS_HOST_VERIFICATION HHV,
-HOST_VERIFICATION HV,
-
-(Select C.listing_id as lid , avg(C.price) as lprice
-From Listing_calendar C
-WHERE C.cdate >= '01.03.19'--'2019-03-01'
-AND C.cdate   <= '30-04-19'--'2019-09-01'
-AND C.available = 't'
-Group BY C.listing_id)
-Where L.id = lid
--- # Beds >= 2
-and L.beds >= 2
--- REVIEW_SCORES_RATING >= 8
-And L.REVIEW_SCORES_RATING >= 8.0
--- City : Berlin
-And C.city = 'Berlin'
-And C.city_id = L.city_id
--- Cancellation_policy : flexible
-And CP.CANCELLATION_POLICY = 'flexible'
-And CP.cpid = L.cpid
--- host_verification : government_id
-And HV.HOST_VERIFICATION = 'government_id'
-and HHV.hvid = HV.hvid
-and HHV.listing_id = L.id
---search the 5 cheapest
-Order By lprice
-FETCH FIRST 5 ROWS ONLY
-;
-
+SELECT L.id,
+  lprice
+FROM Listing L,
+  City C,
+  Cancellation_policy CP,
+  HAS_HOST_VERIFICATION HHV,
+  HOST_VERIFICATION HV,
+  (SELECT C.listing_id AS lid ,
+    AVG(C.price)       AS lprice
+  FROM Listing_calendar C
+  WHERE C.cdate  >= '01.03.19'--'2019-03-01'
+  AND C.cdate    <= '30-04-19'--'2019-09-01'
+  AND C.available = 't'
+  GROUP BY C.listing_id
+  )
+WHERE L.id = lid
+  -- # Beds >= 2
+AND L.beds >= 2
+  -- REVIEW_SCORES_RATING >= 8
+AND L.REVIEW_SCORES_RATING >= 8.0
+  -- City : Berlin
+AND C.city    = 'Berlin'
+AND C.city_id = L.city_id
+  -- Cancellation_policy : flexible
+AND CP.CANCELLATION_POLICY = 'flexible'
+AND CP.cpid                = L.cpid
+  -- host_verification : government_id
+AND HV.HOST_VERIFICATION = 'government_id'
+AND HHV.hvid             = HV.hvid
+AND HHV.listing_id       = L.id
+  --search the 5 cheapest
+ORDER BY lprice
+FETCH FIRST 5 ROWS ONLY ;
 --5
-
 SELECT *
 FROM
   (SELECT L.id,
@@ -112,8 +107,6 @@ FROM
     )
   )
 WHERE row_number <= 3;
-
-
 --6
 SELECT *
 FROM
@@ -128,8 +121,6 @@ FROM
   AND L.id                    = lid
   )
 WHERE row_number <=3;
-
-
 --7
 SELECT *
 FROM
@@ -155,7 +146,6 @@ FROM
     ) Cerise
   )
 WHERE row_number <=3;
-
 --8
 CREATE VIEW amenity_list_c AS
 SELECT listing_id, COUNT(*) AS cnt FROM Has_amenity GROUP BY listing_id ;
@@ -178,82 +168,124 @@ AND L2.id IN
     )
   FETCH FIRST 1 ROWS ONLY
   ) ;
-  
-
 --9
-Select C.city
-From city C,
-(
-Select city_id, count(*) as cnt
-From Listing L , review R
-Where L.rtid in 
-(Select rtid
-From Listing L,
-
-(Select HA.listing_id, Count(*) as cnt
-FROM Has_amenity HA
-Group by ha.listing_id)
-
-Where L.id = listing_id
-Group By rtid 
-Having avg(cnt) >= 3)
-
-and R.listing_id = L.id
-Group by L.city_id) T
-Where C.city_id = T.city_id
-Order By cnt desc
+SELECT C.city
+FROM city C,
+  (SELECT city_id,
+    COUNT(*) AS cnt
+  FROM Listing L ,
+    review R
+  WHERE L.rtid IN
+    (SELECT rtid
+    FROM Listing L,
+      (SELECT HA.listing_id,
+        COUNT(*) AS cnt
+      FROM Has_amenity HA
+      GROUP BY ha.listing_id
+      )
+    WHERE L.id = listing_id
+    GROUP BY rtid
+    HAVING AVG(cnt) >= 3
+    )
+  AND R.listing_id = L.id
+  GROUP BY L.city_id
+  ) T
+WHERE C.city_id = T.city_id
+ORDER BY cnt DESC
 FETCH FIRST 1 ROWS ONLY;
-
 --10 La querry est quasi faite, il faut juste que je mette à jour calendar. A vérifier si je fais bien les choses
 CREATE VIEW madrid_listing AS
-  SELECT L.id as listing_id,  L.nid as nid, L.host_id FROM Listing L, City C Where L.city_id = C.city_id and C.city = 'Madrid'
-  ; 
-
-Select part.nid
-From
-(Select L.nid as nid , Count(Distinct L.listing_id) as cnt
-From Listing_calendar C, madrid_listing L
-where extract(YEAR from C.cdate) = 2019
-and L.listing_id= C.listing_id 
-And C.available = 'f'
-and L.nid IN
-(
-Select L.nid
-From Host H, madrid_listing L
-Where L.host_id = H.host_id
-Group BY L.nid
-Having max(H.since) <= '01.06.17'
-)
-Group by L.nid
-Having Count(*) > 0) part,
-
-(Select L.nid as nid , Count(Distinct L.listing_id) as cnt
-From Listing_calendar C , madrid_listing L
-Where L.listing_id= C.listing_id
-Group by L.nid
-Having Count(*) > 0) total
-Where part.nid = total.nid
-and part.cnt / total.cnt > 0.5
-;
-
+SELECT L.id                AS listing_id,
+  L.nid                    AS nid,
+  L.host_id
+FROM Listing L,
+  City C
+WHERE L.city_id = C.city_id
+AND C.city      = 'Madrid' ;
+SELECT part.nid
+FROM
+  (SELECT L.nid                  AS nid ,
+    COUNT(DISTINCT L.listing_id) AS cnt
+  FROM Listing_calendar C,
+    madrid_listing L
+  WHERE extract(YEAR FROM C.cdate) = 2019
+  AND L.listing_id                 = C.listing_id
+  AND C.available                  = 'f'
+  AND L.nid                       IN
+    (SELECT L.nid
+    FROM Host H,
+      madrid_listing L
+    WHERE L.host_id = H.host_id
+    GROUP BY L.nid
+    HAVING MAX(H.since) <= '01.06.17'
+    )
+  GROUP BY L.nid
+  HAVING COUNT(*) > 0
+  ) part,
+  (SELECT L.nid                  AS nid ,
+    COUNT(DISTINCT L.listing_id) AS cnt
+  FROM Listing_calendar C ,
+    madrid_listing L
+  WHERE L.listing_id= C.listing_id
+  GROUP BY L.nid
+  HAVING COUNT(*) > 0
+  ) total
+WHERE part.nid           = total.nid
+AND part.cnt / total.cnt > 0.5 ;
 --11
-Select part.country_id, part.cnt / total.cnt
-From
-(Select city.country_id as country_id , Count(Distinct L.id) as cnt
-From Listing_calendar C, Listing L, City city
-where extract(YEAR from C.cdate) = 2018
-and L.id= C.listing_id 
-and L.city_id = city.city_id
-And C.available = 't'
-Group by city.country_id
-Having Count(*) > 0) part,
-
-(Select city.country_id as country_id , Count(Distinct L.id) as cnt
-From Listing_calendar C , Listing L, City city
-Where L.id= C.listing_id
-and L.city_id = city.city_id
-Group by city.country_id
-Having Count(*) > 0) total
-Where part.country_id = total.country_id
-and part.cnt / total.cnt > 0.2
-;
+SELECT part.country_id,
+  part.cnt / total.cnt
+FROM
+  (SELECT city.country_id AS country_id ,
+    COUNT(DISTINCT L.id)  AS cnt
+  FROM Listing_calendar C,
+    Listing L,
+    City city
+  WHERE extract(YEAR FROM C.cdate) = 2018
+  AND L.id                         = C.listing_id
+  AND L.city_id                    = city.city_id
+  AND C.available                  = 't'
+  GROUP BY city.country_id
+  HAVING COUNT(*) > 0
+  ) part,
+  (SELECT city.country_id AS country_id ,
+    COUNT(DISTINCT L.id)  AS cnt
+  FROM Listing_calendar C ,
+    Listing L,
+    City city
+  WHERE L.id    = C.listing_id
+  AND L.city_id = city.city_id
+  GROUP BY city.country_id
+  HAVING COUNT(*) > 0
+  ) total
+WHERE part.country_id    = total.country_id
+AND part.cnt / total.cnt > 0.2 ;
+--12
+CREATE VIEW barcelona_listing AS
+SELECT L.id AS listing_id,
+  L.nid     AS nid,
+  L.cpid    AS cpid
+FROM Listing L,
+  City C
+WHERE L.city_id = C.city_id
+AND C.city      = 'Barcelona' ;
+SELECT part.nid,
+  part.cnt / total.cnt
+FROM
+  (SELECT L.nid                  AS nid ,
+    COUNT(DISTINCT L.listing_id) AS cnt
+  FROM Barcelona_listing L,
+    CANCELLATION_POLICY CP
+  WHERE L.cpid               = CP.CPID
+  AND CP.CANCELLATION_POLICY = 'strict_14_with_grace_period'
+  GROUP BY L.nid
+  HAVING COUNT(*) > 0
+  ) part,
+  (SELECT L.nid                  AS nid ,
+    COUNT(DISTINCT L.listing_id) AS cnt
+  FROM barcelona_listing L
+  GROUP BY L.nid
+  HAVING COUNT(*) > 0
+  ) total
+WHERE part.nid           = total.nid
+AND part.cnt / total.cnt > 0.05 ;
