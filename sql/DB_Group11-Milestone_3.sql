@@ -1,4 +1,7 @@
 --1
+CREATE INDEX firstTry
+  ON Listing (city_id, host_id);
+
 SELECT C.city,
   cnt
 FROM City C,
