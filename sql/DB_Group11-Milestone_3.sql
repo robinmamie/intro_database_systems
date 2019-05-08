@@ -4,8 +4,13 @@ CREATE INDEX firstTry
 
 CREATE INDEX host_index
   ON Listing (host_id);
+  
+CREATE BITMAP INDEX cityNameIndexTest
+ON City (city);
 
 DROP INDEX firstTry;
+
+DROP INDEX cityNameIndexTest;
 
 SELECT C.city,
   cnt
