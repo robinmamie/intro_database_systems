@@ -1,9 +1,3 @@
-CREATE TABLE neighbourhood (
-    nid             INTEGER,
-    neighbourhood   VARCHAR2(40),
-    PRIMARY KEY ( nid )
-);
-
 CREATE TABLE country (
     country_id     INTEGER,
     country        VARCHAR2(7),
@@ -20,14 +14,23 @@ CREATE TABLE city (
         REFERENCES country ( country_id )
 );
 
-CREATE TABLE bed_type(
+CREATE TABLE neighbourhood (
+    nid             INTEGER,
+    neighbourhood   VARCHAR2(40),
+    city_id         INTEGER,
+    PRIMARY KEY ( nid ),
+    FOREIGN KEY ( city_id )
+        REFERENCES city ( city_id )
+);
+
+CREATE TABLE bed_type (
     btid       INTEGER,
     bed_type   VARCHAR2(13),
     PRIMARY KEY ( btid )
 );
 
 CREATE TABLE cancellation_policy (
-    cpid INTEGER,
+    cpid                  INTEGER,
     cancellation_policy   VARCHAR2(27),
     PRIMARY KEY ( cpid )
 );
@@ -87,7 +90,7 @@ CREATE TABLE listing (
     --neighbourhood_id
     nid                                INTEGER,
     --city_id
-    city_id                            INTEGER,
+    --city_id                            INTEGER,
     latitude                           FLOAT,
     longitude                          FLOAT,
     --property_type_id
@@ -123,8 +126,8 @@ CREATE TABLE listing (
     require_guest_profile_picture      CHAR(1),
     require_guest_phone_verification   CHAR(1),
     PRIMARY KEY ( id ),
-    FOREIGN KEY ( city_id )
-        REFERENCES city ( city_id ),
+    --FOREIGN KEY ( city_id )
+    --   REFERENCES city ( city_id ),
     FOREIGN KEY ( host_id )
         REFERENCES host ( host_id ),
     FOREIGN KEY ( ptid )
