@@ -1,16 +1,5 @@
---1
-CREATE INDEX firstTry
-  ON Listing (city_id, host_id);
-
-CREATE INDEX host_index
-  ON Listing (host_id);
-  
-CREATE BITMAP INDEX cityNameIndexTest
-ON City (city);
-
-DROP INDEX firstTry;
-
-DROP INDEX cityNameIndexTest;
+--1 Print how many hosts in each city have declared the area of their property in square meters. 
+-- Sort the output based on the city name in ascending order.
 
 SELECT C.city,
   cnt
@@ -18,17 +7,54 @@ FROM City C,
   (SELECT cid1 AS cid,
     COUNT(*)   AS cnt
   FROM
-    (SELECT L.city_id AS cid1
-    FROM Listing L
+    (SELECT N.city_id AS cid1
+    FROM Listing L, Neighbourhood N
     WHERE L.square_feet IS NOT NULL
-    GROUP BY L.city_id,
+    AND L.nid = N.nid
+    GROUP BY N.city_id,
       L.host_id
     )
   GROUP BY cid1
   )
 WHERE cid = C.city_id
 ORDER BY C.CITY;
+
+-- 2 The quality of a neighborhood is defined based on the number of listings and the review score of these listings,
+-- one way for computing that is using the median of the review scores, as medians are more robust to outliers.
+-- Find the top-5 neighborhoods using median review scores (review_scores_rating) of listings in Madrid.
+-- Note: Implement the median operator on your own, and do not use the available built-in operator.
 -- We have to create our own function median
+
+CREATE VIEW neigh_listing AS
+SELECT L.id,
+  L.nid AS nid,
+  L.review_scores_rating,
+  row_number() over ( partition BY L.nid order by L.review_scores_rating DESC) row_number
+FROM Listing L
+WHERE review_scores_rating IS NOT NULL;
+--Drop VIEW neigh_listing;
+SELECT nid,
+  median
+FROM
+  (SELECT co.nid,
+    (nl1.review_scores_rating + nl2.review_scores_rating)/2 AS median
+  FROM neigh_listing nl1,
+    neigh_listing nl2,
+    (SELECT L.nid           AS nid,
+      FLOOR((COUNT(*)+1)/2) AS low,
+      CEIL((COUNT( *)+1)/2) AS high
+    FROM Listing L
+    WHERE L.review_scores_rating IS NOT NULL
+    GROUP BY L.nid
+    ) co
+  WHERE co.nid       = nl1.nid
+  AND co.nid         = nl2.nid
+  AND nl1.row_number = co.high
+  AND nl2.row_number = co.low
+  )
+ORDER BY median DESC
+FETCH FIRST 5 ROWS ONLY;
+
 SELECT L.nid ,
   MEDIAN(L.review_scores_rating)
 FROM Listing L
@@ -65,6 +91,7 @@ SELECT L.id,
   lprice
 FROM Listing L,
   City C,
+  Neighbourhood N,
   Cancellation_policy CP,
   HAS_HOST_VERIFICATION HHV,
   HOST_VERIFICATION HV,
@@ -83,7 +110,8 @@ AND L.beds >= 2
 AND L.REVIEW_SCORES_RATING >= 8.0
   -- City : Berlin
 AND C.city    = 'Berlin'
-AND C.city_id = L.city_id
+AND N.nid = L.nid
+AND N.city_id = C.city_id
   -- Cancellation_policy : flexible
 AND CP.CANCELLATION_POLICY = 'flexible'
 AND CP.cpid                = L.cpid
@@ -137,10 +165,10 @@ WHERE row_number <=3;
 --7
 SELECT *
 FROM
-  (SELECT Cerise.nid,
-    Cerise.aid,
+  (SELECT Selector.nid,
+    Selector.aid,
     cnt ,
-    row_number() over ( partition BY Cerise.nid order by cnt DESC) row_number
+    row_number() over ( partition BY Selector.nid order by cnt DESC) row_number
   FROM
     (SELECT L.nid,
       HA.aid,
@@ -148,15 +176,17 @@ FROM
     FROM Has_amenity HA,
       Listing L,
       Room_type RT,
-      City C
+      City C,
+      Neighbourhood N
     WHERE L.id       = HA.listing_id
     AND L.rtid       = RT.rtid
     AND RT.room_type = 'Private room'
-    AND C.city_id    = L.city_id
+    AND N.nid    = L.nid
+    AND N.city_id = C.city_id
     AND C.city       = 'Berlin'
     GROUP BY L.nid,
       HA.aid
-    ) Cerise
+    ) Selector
   )
 WHERE row_number <=3;
 --8
@@ -187,10 +217,12 @@ FROM city C,
   (SELECT city_id,
     COUNT(*) AS cnt
   FROM Listing L ,
+  Neighbourhood N,
     review R
   WHERE L.rtid IN
     (SELECT rtid
     FROM Listing L,
+    
       (SELECT HA.listing_id,
         COUNT(*) AS cnt
       FROM Has_amenity HA
@@ -201,19 +233,23 @@ FROM city C,
     HAVING AVG(cnt) >= 3
     )
   AND R.listing_id = L.id
-  GROUP BY L.city_id
+  AND N.nid = L.nid
+  GROUP BY N.city_id
   ) T
 WHERE C.city_id = T.city_id
 ORDER BY cnt DESC
 FETCH FIRST 1 ROWS ONLY;
 --10 La querry est quasi faite, il faut juste que je mette à jour calendar. A vérifier si je fais bien les choses
+--DROP VIEW madrid_listing;
 CREATE VIEW madrid_listing AS
 SELECT L.id                AS listing_id,
   L.nid                    AS nid,
   L.host_id
 FROM Listing L,
+Neighbourhood N,
   City C
-WHERE L.city_id = C.city_id
+WHERE L.nid = N.nid
+AND N.city_id = C.city_id
 AND C.city      = 'Madrid' ;
 SELECT part.nid
 FROM
@@ -249,14 +285,17 @@ AND part.cnt / total.cnt > 0.5 ;
 SELECT part.country_id,
   part.cnt / total.cnt
 FROM
+
   (SELECT city.country_id AS country_id ,
     COUNT(DISTINCT L.id)  AS cnt
   FROM Listing_calendar C,
     Listing L,
+    Neighbourhood N,
     City city
   WHERE extract(YEAR FROM C.cdate) = 2018
   AND L.id                         = C.listing_id
-  AND L.city_id                    = city.city_id
+  AND L.nid = N.nid
+  AND N.city_id                    = city.city_id
   AND C.available                  = 't'
   GROUP BY city.country_id
   HAVING COUNT(*) > 0
@@ -265,22 +304,27 @@ FROM
     COUNT(DISTINCT L.id)  AS cnt
   FROM Listing_calendar C ,
     Listing L,
+    Neighbourhood N,
     City city
   WHERE L.id    = C.listing_id
-  AND L.city_id = city.city_id
+  AND L.nid = N.nid
+  AND N.city_id = city.city_id
   GROUP BY city.country_id
   HAVING COUNT(*) > 0
   ) total
 WHERE part.country_id    = total.country_id
 AND part.cnt / total.cnt > 0.2 ;
 --12
+--DROP VIEW barcelona_listing;
 CREATE VIEW barcelona_listing AS
 SELECT L.id AS listing_id,
   L.nid     AS nid,
   L.cpid    AS cpid
 FROM Listing L,
-  City C
-WHERE L.city_id = C.city_id
+  City C,
+  Neighbourhood N
+WHERE N.city_id = C.city_id
+AND N.nid = L.nid
 AND C.city      = 'Barcelona' ;
 SELECT part.nid,
   part.cnt / total.cnt

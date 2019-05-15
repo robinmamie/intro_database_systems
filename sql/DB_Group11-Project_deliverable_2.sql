@@ -22,6 +22,7 @@ AND L.id       IN
   FROM Listing_calendar
   WHERE cdate >= '01.03.19'--'2019-03-01'
   AND cdate   <= '01-09-19'--'2019-09-01'
+  AND available = 't'
   );
 
 -- 4. Print how many listing items exist that are posted by two different hosts but the hosts have the same name.
@@ -108,14 +109,16 @@ SELECT
 -- 8. How much more (or less) costly to rent a room with 8 beds in Berlin compared to Madrid on average?
 SELECT avg1 - avg2 FROM
   (SELECT AVG(l1.price) AS avg1
-  FROM Listing l1, City c1
+  FROM Listing l1, Neighbourhood N,  City c1
   WHERE l1.beds = 8
-  AND l1.city_id = c1.city_id
+  AND l1.nid = N.nid
+  AND N.city_id = c1.city_id
   AND c1.city = 'Madrid')
 , (SELECT AVG(l2.price) AS avg2
-  FROM  Listing l2, City c2
+  FROM  Listing l2, City c2, Neighbourhood N
   WHERE l2.beds = 8
-  AND l2.city_id = c2.city_id
+  AND l2.nid = N.nid
+  AND N.city_id = c2.city_id
   AND c2.city = 'Berlin');
 
 --Eric
@@ -123,16 +126,20 @@ SELECT avg1 - avg2 FROM
 SELECT
   (SELECT AVG(L.price)
   FROM Listing L,
-    City C
+    City C, 
+    Neighbourhood N
   WHERE L.beds= 8
-  AND L.city_id      = C.city_id
+  AND L.nid = N.nid
+  AND N.city_id = C.city_id
   AND C.city      = 'Berlin'
   ) -
   (SELECT AVG(L.price)
   FROM Listing L,
-    City C
+    City C, 
+    Neighbourhood N
   WHERE L.beds= 8
-  AND L.city_id       = C.city_id
+  AND L.nid = N.nid
+  AND N.city_id = C.city_id
   AND C.city      = 'Madrid'
   )
 FROM DUAL;
@@ -141,8 +148,9 @@ FROM DUAL;
 SELECT H.host_id, H.host_name
 FROM Host H
 WHERE H.host_id IN (SELECT  L.host_id
-FROM Listing L, City C1, Country C2
-WHERE L.city_id   = C1.city_id
+FROM Listing L, City C1, Country C2, Neighbourhood N
+WHERE L.nid = N.nid
+  AND N.city_id = C1.city_id
 AND C1.country_id = C2.country_id
 AND C2.country = 'Spain'
 GROUP BY L.host_id
@@ -153,8 +161,10 @@ FETCH FIRST 10 ROWS ONLY);
 
 SELECT  L.id, L.name
 FROM Listing L,
-  City C
-WHERE L.city_id   = C.city_id
+  City C, 
+    Neighbourhood N
+WHERE L.nid  = N.nid
+  AND N.city_id = C.city_id
 AND C.city = 'Barcelona'
 ORDER BY L.review_scores_rating DESC
 FETCH FIRST 10 ROWS ONLY;
