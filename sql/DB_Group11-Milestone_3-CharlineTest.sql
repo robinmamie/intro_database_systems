@@ -1,10 +1,5 @@
+
 --1
-DROP INDEX REVIEW_LID_IDX;
-
-CREATE INDEX REVIEW_LID_IDX
-ON REVIEW (LISTING_ID);
-
-
 SELECT C.city,
   cnt
 FROM City C,
@@ -238,6 +233,7 @@ FROM
   ) total
 WHERE part.nid           = total.nid
 AND part.cnt / total.cnt > 0.5 ;
+
 --11
 SELECT part.country_id,
   part.cnt / total.cnt

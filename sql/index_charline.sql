@@ -1,35 +1,20 @@
-
 -- index to speed up 9th query
 CREATE INDEX REVIEW_LID_IDX
 ON REVIEW (LISTING_ID);
 
 DROP INDEX REVIEW_LID_IDX;
 
--- index to speed up 4th query
-CREATE INDEX CITY_ID_IDX
-ON listing (city_id);
+-- index to speed up 10th query
+CREATE INDEX Calendar_idx_lst
+ON Listing_Calendar (listing_id);
 
-DROP INDEX CITY_ID_IDX;
-
---
-CREATE INDEX AVAILABLE_IDX
-ON listing_calendar(available);
+DROP INDEX Calendar_idx_1st;
 
 -- Eric's old stuff
 CREATE INDEX Calendar_idx
 ON Listing_Calendar (extract(YEAR FROM cdate), available);
 
+DROP INDEX Calendar_idx;
+
 CREATE INDEX Calendar_idx_2
 ON Listing_Calendar (extract(YEAR FROM cdate));
-
-CREATE INDEX Calendar_idx_lst
-ON Listing_Calendar (listing_id);
-
-CREATE INDEX HOST_VERIFICATION_IDX
-ON HOST_VERIFICATION (HOST_VERIFICATION);
-
-CREATE INDEX CANCELLATION_POLICY
-ON CANCELLATION_POLICY (CANCELLATION_POLICY);
-
-CREATE INDEX LISTING_SCORE_BEDS_IDX
-ON LISTING (beds, REVIEW_SCORES_RATING);
