@@ -88,7 +88,7 @@ WHERE hlc.cnt =
 AND h.host_id = hlc.hid ;
 --4
 SELECT L.id,
-  lprice
+  Round(lprice,2)
 FROM Listing L,
   City C,
   Neighbourhood N,
@@ -147,7 +147,7 @@ FROM
     HAVING COUNT(*)>= 2
     )
   )
-WHERE row_number <= 3;
+WHERE row_number <= 5;
 --6
 SELECT *
 FROM
@@ -192,6 +192,8 @@ WHERE row_number <=3;
 --8
 CREATE VIEW amenity_list_c AS
 SELECT listing_id, COUNT(*) AS cnt FROM Has_amenity GROUP BY listing_id ;
+
+
 SELECT L1.REVIEW_SCORES_COMMUNICATION - L2.REVIEW_SCORES_COMMUNICATION
 FROM Listing L1,
   Listing L2
@@ -251,6 +253,8 @@ Neighbourhood N,
 WHERE L.nid = N.nid
 AND N.city_id = C.city_id
 AND C.city      = 'Madrid' ;
+
+
 SELECT part.nid
 FROM
   (SELECT L.nid                  AS nid ,
@@ -282,10 +286,10 @@ FROM
 WHERE part.nid           = total.nid
 AND part.cnt / total.cnt > 0.5 ;
 --11
-SELECT part.country_id,
-  part.cnt / total.cnt
+SELECT C.COUNTRY,
+  Round(part.cnt / total.cnt,3)
 FROM
-
+  Country C,
   (SELECT city.country_id AS country_id ,
     COUNT(DISTINCT L.id)  AS cnt
   FROM Listing_calendar C,
@@ -313,6 +317,7 @@ FROM
   HAVING COUNT(*) > 0
   ) total
 WHERE part.country_id    = total.country_id
+AND total.country_id = C.country_id
 AND part.cnt / total.cnt > 0.2 ;
 --12
 --DROP VIEW barcelona_listing;
@@ -326,8 +331,10 @@ FROM Listing L,
 WHERE N.city_id = C.city_id
 AND N.nid = L.nid
 AND C.city      = 'Barcelona' ;
+
+
 SELECT part.nid,
-  part.cnt / total.cnt
+  ROUND(part.cnt / total.cnt, 3)
 FROM
   (SELECT L.nid                  AS nid ,
     COUNT(DISTINCT L.listing_id) AS cnt
