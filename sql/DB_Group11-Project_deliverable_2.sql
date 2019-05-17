@@ -84,15 +84,15 @@ WHERE host_id IN
 
 --7. What	is the difference in the average price of listings with and without Wifi.
 
-SELECT
+SELECT ROUND (ABS (
   (SELECT AVG(L.price)
   FROM Listing L
   WHERE L.id IN
     (SELECT H.listing_id
     FROM Has_amenity H,
       Amenity A
-      WHERE A.amenity = 'Wifi'
-    AND H.aid               = A.aid
+    WHERE A.amenity = 'Wifi'
+    AND H.aid       = A.aid
     )
   ) -
   (SELECT AVG(L.price)
@@ -101,13 +101,14 @@ SELECT
     (SELECT H.listing_id
     FROM Has_amenity H,
       Amenity A
-      WHERE A.amenity = 'Wifi'
-    AND H.aid               = A.aid
+    WHERE A.amenity = 'Wifi'
+    AND H.aid       = A.aid
     )
-  ) FROM DUAL;
+  )) , 2 )
+FROM DUAL;
 
 -- 8. How much more (or less) costly to rent a room with 8 beds in Berlin compared to Madrid on average?
-SELECT avg1 - avg2 FROM
+SELECT ROUND(ABS(avg1 - avg2), 2) FROM
   (SELECT AVG(l1.price) AS avg1
   FROM Listing l1, Neighbourhood N,  City c1
   WHERE l1.beds = 8
@@ -123,25 +124,25 @@ SELECT avg1 - avg2 FROM
 
 --Eric
 
-SELECT
+SELECT ROUND ( ABS (
   (SELECT AVG(L.price)
   FROM Listing L,
-    City C, 
+    City C,
     Neighbourhood N
-  WHERE L.beds= 8
-  AND L.nid = N.nid
+  WHERE L.beds  = 8
+  AND L.nid     = N.nid
   AND N.city_id = C.city_id
-  AND C.city      = 'Berlin'
+  AND C.city    = 'Berlin'
   ) -
   (SELECT AVG(L.price)
   FROM Listing L,
-    City C, 
+    City C,
     Neighbourhood N
-  WHERE L.beds= 8
-  AND L.nid = N.nid
+  WHERE L.beds  = 8
+  AND L.nid     = N.nid
   AND N.city_id = C.city_id
-  AND C.city      = 'Madrid'
-  )
+  AND C.city    = 'Madrid'
+  ) ), 2)
 FROM DUAL;
 
 --9. Find	the top-10 (in terms of	the number of listings) hosts (host_ids, host_names) in Spain
@@ -162,9 +163,12 @@ FETCH FIRST 10 ROWS ONLY);
 SELECT  L.id, L.name
 FROM Listing L,
   City C, 
-    Neighbourhood N
+    Neighbourhood N,
+    Property_type pt
 WHERE L.nid  = N.nid
   AND N.city_id = C.city_id
 AND C.city = 'Barcelona'
+AND L.ptid = pt.ptid
+AND pt.property_type = 'Apartment'
 ORDER BY L.review_scores_rating DESC
 FETCH FIRST 10 ROWS ONLY;

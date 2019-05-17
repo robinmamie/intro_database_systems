@@ -92,6 +92,7 @@ SELECT L.id,
 FROM Listing L,
   City C,
   Neighbourhood N,
+  Property_type pt,
   Cancellation_policy CP,
   HAS_HOST_VERIFICATION HHV,
   HOST_VERIFICATION HV,
@@ -112,6 +113,8 @@ AND L.REVIEW_SCORES_RATING >= 8.0
 AND C.city    = 'Berlin'
 AND N.nid = L.nid
 AND N.city_id = C.city_id
+AND L.ptid = pt.ptid
+AND pt.property_type = 'Apartment'
   -- Cancellation_policy : flexible
 AND CP.CANCELLATION_POLICY = 'flexible'
 AND CP.cpid                = L.cpid
