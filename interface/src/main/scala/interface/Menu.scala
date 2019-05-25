@@ -69,6 +69,7 @@ object Menu extends VBox {
     }
 
     onMouseClicked = e => {
+      InstanceBean.instance.clear()
       Center.children = correspPane
       Current.value.style = css + grey
       style = css + white

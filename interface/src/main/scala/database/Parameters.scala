@@ -16,10 +16,10 @@ object Parameters {
     tables.filter( _._1 == table).head._2
   }
 
-  /*
-  val primaryAttributes = tableNames.map { t =>
-    DatabaseLink.fetch(s"SELECT cols.table_name, cols.column_name, cols.position, cons.status, cons.owner FROM all_constraints cons, all_cons_columns col WHERE cols.table_name = '${t}' AND cons.constraint_type = 'P' AND cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner ORDER BY cols.table_name, cols.position;", false).flatten
+  val primaryAttributes = DatabaseLink.getPrimaryKeys()
+  
+  def getPrimaryAttributes(table: String): List[String] = {
+    primaryAttributes.filter(_._1 == table).map{ case (t,k) => k }
   }
-  */
 
 }

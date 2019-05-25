@@ -18,7 +18,20 @@ object InstanceBean {
     for (row <- newInstance) {
       var line: List[StringProperty] = List()
       for (e <- row) {
-        line = StringProperty(e) :: line
+        var info = ""
+        var count = 0
+        if (e != null) {
+          for (c <- e) {
+            if (count > 100 && c == ' ') {
+              info += '\n'
+              count = 0
+            } else {
+              info += c
+              count += 1
+            }
+          }
+        }
+        line = StringProperty(info) :: line
       }
       instance += line.reverse
     }

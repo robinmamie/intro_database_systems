@@ -1,5 +1,7 @@
 package database
 
+import scala.collection.mutable;
+
 import java.sql._
 
 import oracle.jdbc.pool.OracleDataSource
@@ -44,6 +46,32 @@ object DatabaseLink {
     statement.close()
 
     results.reverse
+  }
+
+    def execute(update: String): Unit = {
+    println("Executing update " + update)
+    val statement = con.createStatement()
+    val resultSet = statement.executeUpdate(update)
+    statement.close()
+  }
+
+  def getPrimaryKeys(): List[(String, String)] = {
+
+    var pKeys: List[(String, String)] = List()
+    val statement = con.createStatement()
+    val tables = statement.executeQuery("SELECT table_name FROM user_tables");
+    val meta = con.getMetaData
+    while (tables.next()) {
+      val tableName = tables.getString("TABLE_NAME")
+      val keys = meta.getPrimaryKeys(null,null,tableName)
+      while (keys.next()) {
+        pKeys = (tableName, keys.getString("COLUMN_NAME")) :: pKeys
+      }
+      keys.close()
+    }
+    tables.close()
+    statement.close()
+    return pKeys
   }
 
 }
