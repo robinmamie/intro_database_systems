@@ -22,7 +22,10 @@ object Queries extends Pane {
     spacing = 20
     prefHeight = 800
     children = Seq(
-      new VBox {
+      new ScrollPane {
+      prefWidth = 330
+      style = "-fx-background: black;"
+      content = new VBox {
         spacing = 10
         children =
           QueriesBean.queries.map { q =>
@@ -34,6 +37,7 @@ object Queries extends Pane {
               onMouseClicked = e => InstanceBean.setInstance(DatabaseLink.fetch(Parser.getString(q.file, " ")))
             }
           }
+        }
       },
       new TableInst {
         prefWidth = 800

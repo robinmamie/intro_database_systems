@@ -14,7 +14,7 @@ object QueriesBean {
   }
 
   val queries = ObservableBuffer[Item](
-    (1 to 10).map { t => new Item(false, "Query nb. " + t, "sql/" + t + ".sql") }
+    (1 to 22).map { t => new Item(false, "Query nb. " + t, "sql/" + t + ".sql") }
   )
 
   val results = ObservableBuffer[Result]()
