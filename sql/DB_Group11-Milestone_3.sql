@@ -25,7 +25,7 @@ ORDER BY C.CITY;
 -- Note: Implement the median operator on your own, and do not use the available built-in operator.
 -- We have to create our own function median
 
-CREATE VIEW neigh_listing AS
+CREATE OR REPLACE VIEW neigh_listing AS
 SELECT L.id,
   L.nid AS nid,
   L.review_scores_rating,
@@ -76,7 +76,7 @@ WHERE PERCENTILE_DISC IS NOT NULL
 ORDER BY percentile_disc DESC
 FETCH FIRST 5 ROWS ONLY;
 --3
-CREATE VIEW host_list_c AS
+CREATE OR REPLACE VIEW host_list_c AS
 SELECT L.host_id AS hid , COUNT(*) AS cnt FROM Listing L GROUP BY L.host_id ;
 SELECT h.host_id,
   h.host_name
@@ -193,7 +193,7 @@ FROM
   )
 WHERE row_number <=3;
 --8
-CREATE VIEW amenity_list_c AS
+CREATE OR REPLACE VIEW amenity_list_c AS
 SELECT listing_id, COUNT(*) AS cnt FROM Has_amenity GROUP BY listing_id ;
 
 
@@ -246,7 +246,7 @@ ORDER BY cnt DESC
 FETCH FIRST 1 ROWS ONLY;
 --10 La querry est quasi faite, il faut juste que je mette à jour calendar. A vérifier si je fais bien les choses
 --DROP VIEW madrid_listing;
-CREATE VIEW madrid_listing AS
+CREATE OR REPLACE VIEW madrid_listing AS
 SELECT L.id                AS listing_id,
   L.nid                    AS nid,
   L.host_id
@@ -324,7 +324,8 @@ AND total.country_id = C.country_id
 AND part.cnt / total.cnt > 0.2 ;
 --12
 --DROP VIEW barcelona_listing;
-CREATE VIEW barcelona_listing AS
+CREATE OR REPLACE
+VIEW barcelona_listing AS
 SELECT L.id AS listing_id,
   L.nid     AS nid,
   L.cpid    AS cpid
