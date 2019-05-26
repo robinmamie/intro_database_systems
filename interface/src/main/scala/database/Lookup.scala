@@ -13,7 +13,7 @@ object Lookup {
       val sb = new StringBuilder
       sb ++= s"SELECT ${a.head} FROM ${t} WHERE"
       for (i <- a) sb ++= s" ${i} LIKE '%${toSearch}%' OR"
-      DatabaseLink.fetch(sb.toString.dropRight(3))
+      DatabaseLink.fetch(sb.toString.dropRight(3), true, -1)
     }
   }
 

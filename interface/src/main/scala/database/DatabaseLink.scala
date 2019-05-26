@@ -7,6 +7,7 @@ import java.sql._
 import oracle.jdbc.pool.OracleDataSource
 
 import database.Parameters.Result
+import interface.GlobalBean
 
 object DatabaseLink {
 
@@ -28,7 +29,7 @@ object DatabaseLink {
   def fetch(query : String): Result = fetch(query, true)
 
   def fetch(query: String, header: Boolean): Result = {
-    fetch(query, header, 50)
+    fetch(query, header, GlobalBean.requests().toInt)
   }
 
   def fetch(query: String, header: Boolean, nb: Int): Result = {
