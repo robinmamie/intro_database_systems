@@ -23,4 +23,7 @@ object QueriesBean {
     results.clear()
     results ++= newResults
   }
+
+  val q1 = StringProperty("8")
+  val q5 = StringProperty("Viajes Eco")
 }
