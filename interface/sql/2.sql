@@ -1,4 +1,4 @@
-SELECT AVG(L.review_scores_cleanliness)
+SELECT ROUND ( AVG(L.review_scores_cleanliness) , 2)
 FROM Listing L,
   Has_amenity H,
   Amenity A
