@@ -7,6 +7,7 @@ import scalafx.geometry.Insets
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.control.TableColumn._
 import scalafx.scene.control.{TableCell, TableColumn, TableView}
+import scalafx.scene.control.cell.TextFieldTableCell
 import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color._
 import scalafx.scene.text.Text
@@ -44,9 +45,9 @@ class TableInst extends TableView[List[StringProperty]] {
 
   val data = InstanceBean.instance.onChange{
     (buf, _) =>
+      columns.clear()
       if (!buf.isEmpty) {
         items = buf.tail
-        columns.clear()
         for (i <- 0 until buf(0).size) {
           columns += new TableColumn[List[StringProperty], String] {
             // FIXME allow textWrap (in cellFactory?)

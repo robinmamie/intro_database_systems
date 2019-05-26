@@ -81,11 +81,8 @@ object ShowResults extends VBox {
           prefWidth = 800
           vgap = 5
           hgap = 3
-          // FIXME use something else than head => PrimaryKey
           if (r.size > 1) {
-            children = new AllResultsButton (r.drop(1), t.name) :: r.drop(1).map {
-              ls => new ResultButton(ls.head, t.name)
-            }
+            children = Seq(new AllResultsButton (r.drop(1), t.name))
           }
         }
       )
@@ -97,35 +94,31 @@ class AllResultsButton(res: Result, tableName: String) extends Button {
 
   prefHeight = 15
   style = "-fx-font: 12 arial; -fx-background-color: grey; -fx-border: none; -fx-text-fill:white;"
-  text = "ALL"
+  text = "Show"
 
   onMouseClicked = e => {
     // FIXME other part where to not use head but primary key
-    val att = Parameters.getAttributes(tableName).head
+    val att = Parameters.getPrimaryAttributes(tableName)
+    val allAtt = Parameters.getAttributes(tableName)
     val sb = new StringBuilder
     sb ++= s"SELECT * FROM ${tableName} WHERE "
     for (name <- res) {
-      sb ++= s" ${att} = '${name.head}' OR"
+      if (att == Nil) {
+        sb ++= s"${allAtt.head} = '${name.head}' OR "
+      } else {
+        val subSb = new StringBuilder
+        subSb ++= "("
+        for (p <- att) {
+          subSb ++= s"${p} = '${name(allAtt indexOf p)}' AND "
+        }
+        sb ++= subSb.toString.dropRight(5)
+        sb ++= ") OR "
+      }
+      
     }
-    val query = sb.toString.dropRight(3)
+    val query = sb.toString.dropRight(4)
     Center.children = Instance
     InstanceBean.setInstance(DatabaseLink.fetch(query))
-    InstanceBean.previousWindow = Search
-  }
-
-}
-
-class ResultButton(name: String, tableName: String) extends Button {
-
-  prefHeight = 15
-  style = "-fx-font: 12 arial; -fx-background-color: grey; -fx-border: none; -fx-text-fill:white;"
-  text = name
-
-  onMouseClicked = e => {
-    // FIXME other part where to not use head but primary key
-    val att = Parameters.getAttributes(tableName).head
-    Center.children = Instance
-    InstanceBean.setInstance(DatabaseLink.fetch(s"SELECT * FROM ${tableName} WHERE ${att} = '${name}'"))
     InstanceBean.previousWindow = Search
   }
 
