@@ -290,7 +290,7 @@ WHERE part.nid           = total.nid
 AND part.cnt / total.cnt > 0.5 ;
 --11
 SELECT C.COUNTRY,
-  Round(part.cnt / total.cnt,3)
+  100 * Round(part.cnt / total.cnt,3)
 FROM
   Country C,
   (SELECT city.country_id AS country_id ,
@@ -337,7 +337,7 @@ AND C.city      = 'Barcelona' ;
 
 
 SELECT part.nid,
-  ROUND(part.cnt / total.cnt, 3)
+  100 * ROUND(part.cnt / total.cnt, 3)
 FROM
   (SELECT L.nid                  AS nid ,
     COUNT(DISTINCT L.listing_id) AS cnt
