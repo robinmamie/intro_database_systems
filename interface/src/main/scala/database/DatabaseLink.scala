@@ -28,6 +28,10 @@ object DatabaseLink {
   def fetch(query : String): Result = fetch(query, true)
 
   def fetch(query: String, header: Boolean): Result = {
+    fetch(query, header, 50)
+  }
+
+  def fetch(query: String, header: Boolean, nb: Int): Result = {
     println("Executing statement " + query)
 
     val statement = con.createStatement()
@@ -37,9 +41,11 @@ object DatabaseLink {
     val allColumns = ((1 to columnCount) map (i => meta.getColumnName(i))).toList
 
     var results = if (header ) List(allColumns) else List()
-    while (resultSet.next()) {
-      val line = ((1 to columnCount) map (i => resultSet.getString(i))).toList
-      results = line :: results
+    var i = nb
+    while (resultSet.next() && i != 0) {
+      val line = for (i <- 1 to columnCount) yield resultSet.getString(i)
+      results = line.toList :: results
+      i -= 1
     }
     println("Finished executing the statement.")
 
@@ -48,7 +54,7 @@ object DatabaseLink {
     results.reverse
   }
 
-    def execute(update: String): Unit = {
+  def execute(update: String): Unit = {
     println("Executing update " + update)
     val statement = con.createStatement()
     val resultSet = statement.executeUpdate(update)

@@ -4,7 +4,6 @@ WHERE H.host_id = L.host_id
 AND L.id       IN
   ( SELECT DISTINCT listing_id
   FROM Listing_calendar
-  WHERE cdate >= '01.03.19'--'2019-03-01'
-  AND cdate   <= '01-09-19'--'2019-09-01'
-  AND available = 't'
+  WHERE cdate >= to_date('01-03-2019', 'dd-MM-yyyy')
+  AND cdate   <= to_date('01-09-2019', 'dd-MM-yyyy')
   )

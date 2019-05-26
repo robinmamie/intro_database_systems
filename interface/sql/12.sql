@@ -5,7 +5,6 @@ SELECT L.id,
   row_number() over ( partition BY L.nid order by L.review_scores_rating DESC) row_number
 FROM Listing L
 WHERE review_scores_rating IS NOT NULL;
---Drop VIEW neigh_listing;
 SELECT nid,
   median
 FROM

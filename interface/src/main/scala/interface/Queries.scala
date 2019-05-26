@@ -34,7 +34,9 @@ object Queries extends Pane {
               prefWidth  = 300
               prefHeight = 30
               style = "-fx-font: 20 arial; -fx-background-color: grey; -fx-border: none; -fx-text-fill:white;"
-              onMouseClicked = e => InstanceBean.setInstance(DatabaseLink.fetch(Parser.getString(q.file, " ")))
+              val a = Parser.getString(q.file, " ").split(";")
+              for (i <- 0 until a.size - 1) DatabaseLink.execute(a(i))
+              onMouseClicked = e => InstanceBean.setInstance(DatabaseLink.fetch(a(a.size - 1)))
             }
           }
         }
