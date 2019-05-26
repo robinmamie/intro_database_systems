@@ -1,7 +1,12 @@
 SELECT  L.id, L.name
 FROM Listing L,
-  City C
-WHERE L.city_id   = C.city_id
+  City C, 
+    Neighbourhood N,
+    Property_type pt
+WHERE L.nid  = N.nid
+  AND N.city_id = C.city_id
 AND C.city = 'Barcelona'
+AND L.ptid = pt.ptid
+AND pt.property_type = 'Apartment'
 ORDER BY L.review_scores_rating DESC
 FETCH FIRST 10 ROWS ONLY

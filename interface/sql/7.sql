@@ -1,12 +1,12 @@
-SELECT
+SELECT ROUND (ABS (
   (SELECT AVG(L.price)
   FROM Listing L
   WHERE L.id IN
     (SELECT H.listing_id
     FROM Has_amenity H,
       Amenity A
-      WHERE A.amenity = 'Wifi'
-    AND H.aid               = A.aid
+    WHERE A.amenity = 'Wifi'
+    AND H.aid       = A.aid
     )
   ) -
   (SELECT AVG(L.price)
@@ -15,7 +15,8 @@ SELECT
     (SELECT H.listing_id
     FROM Has_amenity H,
       Amenity A
-      WHERE A.amenity = 'Wifi'
-    AND H.aid               = A.aid
+    WHERE A.amenity = 'Wifi'
+    AND H.aid       = A.aid
     )
-  ) FROM DUAL
+  )) , 2 )
+FROM DUAL
