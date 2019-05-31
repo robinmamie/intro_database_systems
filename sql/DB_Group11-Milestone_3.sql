@@ -33,9 +33,10 @@ SELECT L.id,
 FROM Listing L
 WHERE review_scores_rating IS NOT NULL;
 --Drop VIEW neigh_listing;
-SELECT nid,
-  median
+SELECT N.neighbourhood,
+  S.median
 FROM
+  Neighbourhood N,
   (SELECT co.nid,
     (nl1.review_scores_rating + nl2.review_scores_rating)/2 AS median
   FROM neigh_listing nl1,
@@ -51,7 +52,8 @@ FROM
   AND co.nid         = nl2.nid
   AND nl1.row_number = co.high
   AND nl2.row_number = co.low
-  )
+  ) S
+WHERE N.nid = S.nid
 ORDER BY median DESC
 FETCH FIRST 5 ROWS ONLY;
 
@@ -152,8 +154,9 @@ FROM
   )
 WHERE row_number <= 5;
 --6
-SELECT *
+SELECT H.host_name, S.Lid, H.host_id
 FROM
+  Host H,
   (SELECT L.host_id,
     lid,
     cnt,
@@ -163,11 +166,14 @@ FROM
     )
   WHERE review_scores_rating IS NOT NULL
   AND L.id                    = lid
-  )
-WHERE row_number <=3;
+  ) S
+WHERE row_number <=3
+AND H.Host_id = S.Host_id;
 --7
-SELECT *
+SELECT N.neighbourhood, A.amenity
 FROM
+  Neighbourhood N,
+  Amenity A,
   (SELECT Selector.nid,
     Selector.aid,
     cnt ,
@@ -190,8 +196,10 @@ FROM
     GROUP BY L.nid,
       HA.aid
     ) Selector
-  )
-WHERE row_number <=3;
+  ) S
+WHERE row_number <=3
+AND S.aid = A.aid
+ANd S.nid = N.nid;
 --8
 CREATE OR REPLACE VIEW amenity_list_c AS
 SELECT listing_id, COUNT(*) AS cnt FROM Has_amenity GROUP BY listing_id ;
@@ -258,8 +266,9 @@ AND N.city_id = C.city_id
 AND C.city      = 'Madrid' ;
 
 
-SELECT part.nid
+SELECT N.neighbourhood
 FROM
+  Neighbourhood N,
   (SELECT L.nid                  AS nid ,
     COUNT(DISTINCT L.listing_id) AS cnt
   FROM Listing_calendar C,
@@ -287,7 +296,8 @@ FROM
   HAVING COUNT(*) > 0
   ) total
 WHERE part.nid           = total.nid
-AND part.cnt / total.cnt > 0.5 ;
+AND part.cnt / total.cnt > 0.5 
+AND part.nid = N.nid;
 --11
 SELECT C.COUNTRY,
   100 * Round(part.cnt / total.cnt,3)

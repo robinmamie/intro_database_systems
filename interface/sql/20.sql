@@ -8,8 +8,9 @@ Neighbourhood N,
 WHERE L.nid = N.nid
 AND N.city_id = C.city_id
 AND C.city      = 'Madrid' ;
-SELECT part.nid
+SELECT N.neighbourhood
 FROM
+  Neighbourhood N,
   (SELECT L.nid                  AS nid ,
     COUNT(DISTINCT L.listing_id) AS cnt
   FROM Listing_calendar C,
@@ -23,7 +24,7 @@ FROM
       madrid_listing L
     WHERE L.host_id = H.host_id
     GROUP BY L.nid
-    HAVING MAX(H.since) <= to_date('01-06-2017', 'dd-MM-yyyy')
+    HAVING MAX(H.since) <= '01.06.17'
     )
   GROUP BY L.nid
   HAVING COUNT(*) > 0
@@ -38,3 +39,4 @@ FROM
   ) total
 WHERE part.nid           = total.nid
 AND part.cnt / total.cnt > 0.5 
+AND part.nid = N.nid

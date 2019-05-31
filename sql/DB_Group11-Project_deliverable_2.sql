@@ -1,10 +1,10 @@
 -- 1. What	is	the	average	price	for	a	listing	with 8	bedrooms?
-SELECT AVG (l.price)
+SELECT ROUND(AVG (l.price), 2)
 FROM Listing l
 WHERE l.bedrooms = 8;
 
 -- 2. What is the average cleaning	review score for listings with TV?
-SELECT AVG(L.review_scores_cleanliness)
+SELECT ROUND(AVG(L.review_scores_cleanliness), 2)
 FROM Listing L,
   Has_amenity H,
   Amenity A

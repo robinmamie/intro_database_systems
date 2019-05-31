@@ -1,5 +1,7 @@
-SELECT *
+SELECT N.neighbourhood, A.amenity
 FROM
+  Neighbourhood N,
+  Amenity A,
   (SELECT Selector.nid,
     Selector.aid,
     cnt ,
@@ -22,5 +24,7 @@ FROM
     GROUP BY L.nid,
       HA.aid
     ) Selector
-  )
+  ) S
 WHERE row_number <=3
+AND S.aid = A.aid
+ANd S.nid = N.nid

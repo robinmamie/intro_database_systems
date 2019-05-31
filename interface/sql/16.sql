@@ -1,5 +1,6 @@
-SELECT *
+SELECT H.host_name, S.Lid, H.host_id
 FROM
+  Host H,
   (SELECT L.host_id,
     lid,
     cnt,
@@ -9,5 +10,6 @@ FROM
     )
   WHERE review_scores_rating IS NOT NULL
   AND L.id                    = lid
-  )
+  ) S
 WHERE row_number <=3
+AND H.Host_id = S.Host_id
