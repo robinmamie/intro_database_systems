@@ -170,5 +170,6 @@ WHERE L.nid  = N.nid
 AND C.city = 'Barcelona'
 AND L.ptid = pt.ptid
 AND pt.property_type = 'Apartment'
+AND L.review_scores_rating IS NOT NULL
 ORDER BY L.review_scores_rating DESC
 FETCH FIRST 10 ROWS ONLY;
