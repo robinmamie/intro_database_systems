@@ -126,8 +126,6 @@ CREATE TABLE listing (
     require_guest_profile_picture      CHAR(1),
     require_guest_phone_verification   CHAR(1),
     PRIMARY KEY ( id ),
-    --FOREIGN KEY ( city_id )
-    --   REFERENCES city ( city_id ),
     FOREIGN KEY ( host_id )
         REFERENCES host ( host_id ),
     FOREIGN KEY ( ptid )

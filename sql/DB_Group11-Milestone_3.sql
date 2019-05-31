@@ -154,7 +154,7 @@ FROM
   )
 WHERE row_number <= 5;
 --6
-SELECT H.host_name, S.Lid, H.host_id
+SELECT H.host_name, S.Lid
 FROM
   Host H,
   (SELECT L.host_id,
