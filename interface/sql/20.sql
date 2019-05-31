@@ -24,7 +24,7 @@ FROM
       madrid_listing L
     WHERE L.host_id = H.host_id
     GROUP BY L.nid
-    HAVING MAX(H.since) <= '01.06.17'
+    HAVING MAX(H.since) <= to_date('01-06-2017', 'dd-MM-yyyy')
     )
   GROUP BY L.nid
   HAVING COUNT(*) > 0
