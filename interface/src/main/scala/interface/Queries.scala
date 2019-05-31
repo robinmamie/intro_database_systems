@@ -49,7 +49,7 @@ object Queries extends Pane {
             }
           }
         }, new TableInst {
-          prefWidth = 800
+          prefWidth = 700
           }
         )
       }, new HBox {
