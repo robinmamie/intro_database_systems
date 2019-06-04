@@ -106,15 +106,8 @@ class AllResultsButton(res: Result, tableName: String) extends Button {
       if (att == Nil) {
         sb ++= s"${allAtt.head} = '${name.head}' OR "
       } else {
-        val subSb = new StringBuilder
-        subSb ++= "("
-        for (p <- att) {
-          subSb ++= s"${p} = '${name(allAtt indexOf p)}' AND "
-        }
-        sb ++= subSb.toString.dropRight(5)
-        sb ++= ") OR "
+        sb ++= s"${att.head} = '${name.head}' OR "
       }
-      
     }
     val query = sb.toString.dropRight(4)
     Center.children = Instance
